@@ -5,8 +5,9 @@ from tensorflow.keras.layers import (
     Concatenate,
     Add,
     Subtract,
+    LeakyReLU,
 )
-from tensorflow.keras.activations import tanh, relu
+from tensorflow.keras.activations import tanh, relu, sigmoid
 from tensorflow.keras.models import Model
 import tensorflow as tf
 import logging
@@ -24,18 +25,24 @@ def call_gen_model(input_size, modle_type):
         model = gm.depth_to_space_model()
     elif modle_type == "exp":
         model = gm.exp_model()
+    elif modle_type == "leaky_relu":
+        model = gm.leaky_relu_model()
     elif modle_type == "mul_add":
         model = gm.mul_add_model()
     elif modle_type == "power":
         model = gm.power_model()
     elif modle_type == "relu":
         model = gm.relu_model()
+    elif modle_type == "relu6":
+        model = gm.relu6_model()
     elif modle_type == "right_shift":
         model = gm.right_shift_model()
     elif modle_type == "rsqrt":
         model = gm.rsqrt_model()
     elif modle_type == "sin":
         model = gm.sin_model()
+    elif modle_type == "sigmoid":
+        model = gm.sigmoid_model()
     elif modle_type == "space_to_depth":
         model = gm.space_to_depth_model()
     elif modle_type == "square":
@@ -85,6 +92,11 @@ class gen_model:
         output = Model([self.input], exp_out)
         return output
 
+    def leaky_relu_model(self):
+        leaky_relu_out = LeakyReLU(alpha=0.3)(self.input)
+        output = Model([self.input], leaky_relu_out)
+        return output
+
     def mul_add_model(self):
         input_set = []
         for i in range(5):
@@ -103,6 +115,11 @@ class gen_model:
         output = Model([self.input], relu_out)
         return output
 
+    def relu6_model(self):
+        relu6_out = tf.nn.relu6(self.input)
+        output = Model([self.input], relu6_out)
+        return output
+
     def right_shift_model(self):
         input1 = Input(self.input_size, batch_size=1, dtype="int32")
         input2 = Input(self.input_size, batch_size=1, dtype="int32")
@@ -118,6 +135,11 @@ class gen_model:
     def sin_model(self):
         sin_out = tf.math.sin(self.input)
         output = Model([self.input], sin_out)
+        return output
+
+    def sigmoid_model(self):
+        sigmoid_out = sigmoid(self.input)
+        output = Model([self.input], sigmoid_out)
         return output
 
     def space_to_depth_model(self):
