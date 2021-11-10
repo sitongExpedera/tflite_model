@@ -13,45 +13,47 @@ import tensorflow as tf
 import logging
 
 
-def call_gen_model(input_size, modle_type):
+def call_gen_model(input_size, model_type):
     gm = gen_model(input_size)
-    if modle_type == "abs":
+    if model_type == "abs":
         model = gm.abs_model()
-    elif modle_type == "concat":
+    elif model_type == "concat":
         model = gm.concat_model()
-    elif modle_type == "conv2d_trans":
+    elif model_type == "conv2d_trans":
         model = gm.conv2d_trans_model()
-    elif modle_type == "depth_to_space":
+    elif model_type == "depth_to_space":
         model = gm.depth_to_space_model()
-    elif modle_type == "exp":
+    elif model_type == "exp":
         model = gm.exp_model()
-    elif modle_type == "leaky_relu":
+    elif model_type == "greater":
+        model = gm.greater_model()
+    elif model_type == "leaky_relu":
         model = gm.leaky_relu_model()
-    elif modle_type == "mul_add":
+    elif model_type == "mul_add":
         model = gm.mul_add_model()
-    elif modle_type == "power":
+    elif model_type == "power":
         model = gm.power_model()
-    elif modle_type == "relu":
+    elif model_type == "relu":
         model = gm.relu_model()
-    elif modle_type == "relu6":
+    elif model_type == "relu6":
         model = gm.relu6_model()
-    elif modle_type == "right_shift":
+    elif model_type == "right_shift":
         model = gm.right_shift_model()
-    elif modle_type == "rsqrt":
+    elif model_type == "rsqrt":
         model = gm.rsqrt_model()
-    elif modle_type == "sin":
+    elif model_type == "sin":
         model = gm.sin_model()
-    elif modle_type == "sigmoid":
+    elif model_type == "sigmoid":
         model = gm.sigmoid_model()
-    elif modle_type == "space_to_depth":
+    elif model_type == "space_to_depth":
         model = gm.space_to_depth_model()
-    elif modle_type == "square":
+    elif model_type == "square":
         model = gm.square_model()
-    elif modle_type == "subtract":
+    elif model_type == "subtract":
         model = gm.subtract_model()
-    elif modle_type == "tan":
+    elif model_type == "tan":
         model = gm.tan_model()
-    elif modle_type == "tanh":
+    elif model_type == "tanh":
         model = gm.tanh_model()
     else:
         logging.error("Cannot support this operator!!!")
@@ -90,6 +92,11 @@ class gen_model:
     def exp_model(self):
         exp_out = tf.math.exp(self.input)
         output = Model([self.input], exp_out)
+        return output
+
+    def greater_model(self):
+        greater_out = tf.math.greater(self.input, self.input)
+        output = Model([self.input], greater_out)
         return output
 
     def leaky_relu_model(self):
