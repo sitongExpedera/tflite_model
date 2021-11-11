@@ -13,8 +13,8 @@ import tensorflow as tf
 import logging
 
 
-def call_gen_model(input_size, model_type):
-    gm = gen_model(input_size)
+def call_gen_model(input_size, model_type, data_type):
+    gm = gen_model(input_size, data_type)
     if model_type == "abs":
         model = gm.abs_model()
     elif model_type == "concat":
@@ -35,6 +35,8 @@ def call_gen_model(input_size, model_type):
         model = gm.less_model()
     elif model_type == "less_equal":
         model = gm.less_equal_model()
+    elif model_type == "logical_not":
+        model = gm.logical_not_model()
     elif model_type == "mul_add":
         model = gm.mul_add_model()
     elif model_type == "not_equal":
@@ -70,9 +72,9 @@ def call_gen_model(input_size, model_type):
 
 
 class gen_model:
-    def __init__(self, input_size):
+    def __init__(self, input_size, data_type):
         self.input_size = input_size
-        self.input = Input(self.input_size, batch_size=1)
+        self.input = Input(self.input_size, batch_size=1, dtype=data_type)
 
     def abs_model(self):
         abs_out = tf.math.abs(self.input)
@@ -127,6 +129,11 @@ class gen_model:
         output = Model([self.input], less_equal_out)
         return output
 
+    def logical_not_model(self):
+        logical_not_out = tf.math.logical_not(self.input)
+        output = Model([self.input], logical_not_out)
+        return output
+
     def mul_add_model(self):
         input_set = []
         for i in range(5):
@@ -156,10 +163,8 @@ class gen_model:
         return output
 
     def right_shift_model(self):
-        input1 = Input(self.input_size, batch_size=1, dtype="int32")
-        input2 = Input(self.input_size, batch_size=1, dtype="int32")
-        right_shift_output = tf.bitwise.right_shift(input1, input2)
-        output = Model([input1, input2], right_shift_output)
+        right_shift_output = tf.bitwise.right_shift(self.input, self.input)
+        output = Model([self.input], right_shift_output)
         return output
 
     def rsqrt_model(self):

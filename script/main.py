@@ -8,10 +8,15 @@ input_shape = [1, 8, 8, 8]
 num_inp = 1
 
 
-def gen_ONNX(model, model_name, save_dir):
+def gen_ONNX(model, model_name, save_dir, op_type):
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
-    converter.representative_dataset = representative_dataset_gen
+    if op_type == "float32":
+        converter.representative_dataset = representative_float_dataset_gen
+    elif op_type == "bool":
+        converter.representative_dataset = representative_bool_dataset_gen
+    elif op_type == "int32":
+        converter.representative_dataset = representative_int_dataset_gen
     converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
     tflite_quant_model = converter.convert()
 
@@ -20,10 +25,26 @@ def gen_ONNX(model, model_name, save_dir):
     print(tflite_model_name)
 
 
-def representative_dataset_gen():
+def representative_float_dataset_gen():
     input_set = []
     for _ in range(num_inp):
-        input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)
+        input_data = np.array(np.random.random_sample(input_shape), dtype="float32")
+        input_set.append(input_data)
+    yield input_set
+
+
+def representative_bool_dataset_gen():
+    input_set = []
+    for _ in range(num_inp):
+        input_data = np.array(np.random.random_sample(input_shape), dtype="bool")
+        input_set.append(input_data)
+    yield input_set
+
+
+def representative_int_dataset_gen():
+    input_set = []
+    for _ in range(num_inp):
+        input_data = np.array(np.random.random_sample(input_shape), dtype="int32")
         input_set.append(input_data)
     yield input_set
 
@@ -46,9 +67,17 @@ if __name__ == "__main__":
     num_inp = args.num_inp
     input_shape = [1, args.height, args.width, args.channels]
 
+    if args.model.lower() == "logical_not":
+        data_type = "bool"
+    elif args.model.lower() == "right_shift":
+        data_type = "int32"
+    else:
+        data_type = "float32"
+
     model = gm.call_gen_model(
-        [args.height, args.width, args.channels], args.model.lower()
+        [args.height, args.width, args.channels], args.model.lower(), data_type
     )
+
     model.summary()
     model_name = (
         args.model.lower()
@@ -59,4 +88,4 @@ if __name__ == "__main__":
         + "x"
         + str(args.channels)
     )
-    gen_ONNX(model, model_name, args.out_dir)
+    gen_ONNX(model, model_name, args.out_dir, data_type)
