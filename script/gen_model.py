@@ -37,6 +37,8 @@ def call_gen_model(input_size, model_type, data_type):
         model = gm.less_equal_model()
     elif model_type == "logical_not":
         model = gm.logical_not_model()
+    elif model_type == "logical_or":
+        model = gm.logical_or_model()
     elif model_type == "mul_add":
         model = gm.mul_add_model()
     elif model_type == "not_equal":
@@ -132,6 +134,11 @@ class gen_model:
     def logical_not_model(self):
         logical_not_out = tf.math.logical_not(self.input)
         output = Model([self.input], logical_not_out)
+        return output
+
+    def logical_or_model(self):
+        logical_or_out = tf.math.logical_or(self.input, self.input)
+        output = Model([self.input], logical_or_out)
         return output
 
     def mul_add_model(self):

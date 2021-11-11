@@ -67,7 +67,7 @@ if __name__ == "__main__":
     num_inp = args.num_inp
     input_shape = [1, args.height, args.width, args.channels]
 
-    if args.model.lower() == "logical_not":
+    if args.model.lower() == "logical_not" or "logical_or":
         data_type = "bool"
     elif args.model.lower() == "right_shift":
         data_type = "int32"
