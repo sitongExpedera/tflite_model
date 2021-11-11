@@ -27,10 +27,18 @@ def call_gen_model(input_size, model_type):
         model = gm.exp_model()
     elif model_type == "greater":
         model = gm.greater_model()
+    elif model_type == "greater_equal":
+        model = gm.greater_equal_model()
     elif model_type == "leaky_relu":
         model = gm.leaky_relu_model()
+    elif model_type == "less":
+        model = gm.less_model()
+    elif model_type == "less_equal":
+        model = gm.less_equal_model()
     elif model_type == "mul_add":
         model = gm.mul_add_model()
+    elif model_type == "not_equal":
+        model = gm.not_equal_model()
     elif model_type == "power":
         model = gm.power_model()
     elif model_type == "relu":
@@ -99,9 +107,24 @@ class gen_model:
         output = Model([self.input], greater_out)
         return output
 
+    def greater_equal_model(self):
+        greater_equal_out = tf.math.greater_equal(self.input, self.input)
+        output = Model([self.input], greater_equal_out)
+        return output
+
     def leaky_relu_model(self):
         leaky_relu_out = LeakyReLU(alpha=0.3)(self.input)
         output = Model([self.input], leaky_relu_out)
+        return output
+
+    def less_model(self):
+        less_out = tf.math.less(self.input, self.input)
+        output = Model([self.input], less_out)
+        return output
+
+    def less_equal_model(self):
+        less_equal_out = tf.math.less_equal(self.input, self.input)
+        output = Model([self.input], less_equal_out)
         return output
 
     def mul_add_model(self):
@@ -110,6 +133,11 @@ class gen_model:
             input_set.append(self.input)
         mul_add_output = Add()(input_set)
         output = Model(input_set, mul_add_output)
+        return output
+
+    def not_equal_model(self):
+        not_equal_out = tf.math.not_equal(self.input, self.input)
+        output = Model([self.input], not_equal_out)
         return output
 
     def power_model(self):
