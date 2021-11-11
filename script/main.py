@@ -55,7 +55,38 @@ def representative_int_dataset_gen():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", "-m", type=str, default="")
+    model_choices = [
+        "abs",
+        "arg_max",
+        "arg_min",
+        "concat",
+        "conv2d_trans",
+        "depth_to_space",
+        "exp",
+        "greater",
+        "greater_equal",
+        "leaky_relu",
+        "less",
+        "less_equal",
+        "log_softmax",
+        "logical_not",
+        "logical_or",
+        "mul_add",
+        "not_equal",
+        "power",
+        "relu",
+        "relu6",
+        "right_shift",
+        "rsqrt",
+        "sin",
+        "sigmoid",
+        "space_to_depth",
+        "square",
+        "subtract",
+        "tan",
+        "tanh",
+    ]
+    parser.add_argument("--model", "-m", choices=model_choices, type=str, default="")
     parser.add_argument(
         "--out_dir",
         "-o",
