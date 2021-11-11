@@ -71,9 +71,12 @@ if __name__ == "__main__":
         "log_softmax",
         "logical_not",
         "logical_or",
+        "maximum",
+        "minimum",
         "mul_add",
         "not_equal",
         "power",
+        "reduce_any",
         "relu",
         "relu6",
         "right_shift",
@@ -102,7 +105,11 @@ if __name__ == "__main__":
     num_inp = args.num_inp
     input_shape = [1, args.height, args.width, args.channels]
 
-    if args.model.lower() == "logical_not" or args.model.lower() == "logical_or":
+    if (
+        args.model.lower() == "logical_not"
+        or args.model.lower() == "logical_or"
+        or args.model.lower() == "reduce_any"
+    ):
         data_type = "bool"
     elif args.model.lower() == "right_shift":
         data_type = "int32"

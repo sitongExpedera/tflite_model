@@ -8,6 +8,7 @@ from tensorflow.keras.layers import (
     LeakyReLU,
 )
 from tensorflow.keras.activations import tanh, relu, sigmoid
+from tensorflow.keras.metrics import Mean
 from tensorflow.keras.models import Model
 import tensorflow as tf
 import logging
@@ -45,12 +46,18 @@ def call_gen_model(input_size, model_type, data_type):
         model = gm.logical_not_model()
     elif model_type == "logical_or":
         model = gm.logical_or_model()
+    elif model_type == "maximum":
+        model = gm.maximum_model()
+    elif model_type == "minimum":
+        model = gm.minimum_model()
     elif model_type == "mul_add":
         model = gm.mul_add_model()
     elif model_type == "not_equal":
         model = gm.not_equal_model()
     elif model_type == "power":
         model = gm.power_model()
+    elif model_type == "reduce_any":
+        model = gm.reduce_any_model()
     elif model_type == "relu":
         model = gm.relu_model()
     elif model_type == "relu6":
@@ -162,6 +169,16 @@ class gen_model:
         output = Model([self.input], logical_or_out)
         return output
 
+    def maximum_model(self):
+        maximum_out = tf.math.maximum(self.input, self.input)
+        output = Model([self.input], maximum_out)
+        return output
+
+    def minimum_model(self):
+        minimum_out = tf.math.minimum(self.input, self.input)
+        output = Model([self.input], minimum_out)
+        return output
+
     def mul_add_model(self):
         input_set = []
         for i in range(5):
@@ -178,6 +195,11 @@ class gen_model:
     def power_model(self):
         pow_out = tf.math.pow(self.input, 3)
         output = Model([self.input], pow_out)
+        return output
+
+    def reduce_any_model(self):
+        reduce_any_out = tf.math.reduce_any(self.input)
+        output = Model([self.input], reduce_any_out)
         return output
 
     def relu_model(self):
