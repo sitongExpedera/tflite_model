@@ -17,7 +17,11 @@ def gen_ONNX(model, model_name, save_dir, op_type):
         converter.representative_dataset = representative_bool_dataset_gen
     elif op_type == "int32":
         converter.representative_dataset = representative_int_dataset_gen
-    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+    converter.target_spec.supported_ops = [
+        tf.lite.OpsSet.TFLITE_BUILTINS_INT8,
+        tf.lite.OpsSet.SELECT_TF_OPS,
+        tf.lite.OpsSet.TFLITE_BUILTINS,
+    ]
     tflite_quant_model = converter.convert()
 
     tflite_model_name = save_dir + model_name + ".tflite"
@@ -67,7 +71,7 @@ if __name__ == "__main__":
     num_inp = args.num_inp
     input_shape = [1, args.height, args.width, args.channels]
 
-    if args.model.lower() == "logical_not" or "logical_or":
+    if args.model.lower() == "logical_not" or args.model.lower() == "logical_or":
         data_type = "bool"
     elif args.model.lower() == "right_shift":
         data_type = "int32"

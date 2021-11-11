@@ -17,6 +17,8 @@ def call_gen_model(input_size, model_type, data_type):
     gm = gen_model(input_size, data_type)
     if model_type == "abs":
         model = gm.abs_model()
+    elif model_type == "arg_max":
+        model = gm.arg_max_model()
     elif model_type == "concat":
         model = gm.concat_model()
     elif model_type == "conv2d_trans":
@@ -81,6 +83,11 @@ class gen_model:
     def abs_model(self):
         abs_out = tf.math.abs(self.input)
         output = Model([self.input], abs_out)
+        return output
+
+    def arg_max_model(self):
+        arg_max_out = tf.math.argmax(self.input)
+        output = Model([self.input], arg_max_out)
         return output
 
     def concat_model(self):
