@@ -19,6 +19,8 @@ def call_gen_model(input_size, model_type, data_type):
         model = gm.abs_model()
     elif model_type == "arg_max":
         model = gm.arg_max_model()
+    elif model_type == "arg_min":
+        model = gm.arg_min_model()
     elif model_type == "concat":
         model = gm.concat_model()
     elif model_type == "conv2d_trans":
@@ -37,6 +39,8 @@ def call_gen_model(input_size, model_type, data_type):
         model = gm.less_model()
     elif model_type == "less_equal":
         model = gm.less_equal_model()
+    elif model_type == "log_softmax":
+        model = gm.log_softmax_model()
     elif model_type == "logical_not":
         model = gm.logical_not_model()
     elif model_type == "logical_or":
@@ -90,6 +94,11 @@ class gen_model:
         output = Model([self.input], arg_max_out)
         return output
 
+    def arg_min_model(self):
+        arg_min_out = tf.math.argmin(self.input)
+        output = Model([self.input], arg_min_out)
+        return output
+
     def concat_model(self):
         input_set = []
         for i in range(5):
@@ -136,6 +145,11 @@ class gen_model:
     def less_equal_model(self):
         less_equal_out = tf.math.less_equal(self.input, self.input)
         output = Model([self.input], less_equal_out)
+        return output
+
+    def log_softmax_model(self):
+        log_softmax_out = tf.math.log_softmax(self.input)
+        output = Model([self.input], log_softmax_out)
         return output
 
     def logical_not_model(self):
