@@ -77,6 +77,8 @@ if __name__ == "__main__":
         "not_equal",
         "power",
         "reduce_any",
+        "reduce_max",
+        "reduce_min",
         "relu",
         "relu6",
         "right_shift",

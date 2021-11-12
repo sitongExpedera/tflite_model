@@ -58,6 +58,10 @@ def call_gen_model(input_size, model_type, data_type):
         model = gm.power_model()
     elif model_type == "reduce_any":
         model = gm.reduce_any_model()
+    elif model_type == "reduce_max":
+        model = gm.reduce_max_model()
+    elif model_type == "reduce_min":
+        model = gm.reduce_min_model()
     elif model_type == "relu":
         model = gm.relu_model()
     elif model_type == "relu6":
@@ -199,6 +203,16 @@ class gen_model:
 
     def reduce_any_model(self):
         input_tensor = tf.math.reduce_any(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def reduce_max_model(self):
+        input_tensor = tf.math.reduce_max(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def reduce_min_model(self):
+        input_tensor = tf.math.reduce_min(self.input)
         output = Model([self.input], input_tensor)
         return output
 
