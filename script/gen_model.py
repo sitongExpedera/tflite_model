@@ -92,169 +92,169 @@ class gen_model:
         self.input = Input(self.input_size, batch_size=1, dtype=data_type)
 
     def abs_model(self):
-        abs_out = tf.math.abs(self.input)
-        output = Model([self.input], abs_out)
+        input_tensor = tf.math.abs(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def arg_max_model(self):
-        arg_max_out = tf.math.argmax(self.input)
-        output = Model([self.input], arg_max_out)
+        input_tensor = tf.math.argmax(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def arg_min_model(self):
-        arg_min_out = tf.math.argmin(self.input)
-        output = Model([self.input], arg_min_out)
+        input_tensor = tf.math.argmin(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def concat_model(self):
         input_set = []
         for i in range(5):
             input_set.append(self.input)
-        concat_output = Concatenate()(input_set)
-        output = Model(input_set, concat_output)
+        input_tensor = Concatenate()(input_set)
+        output = Model(input_set, input_tensor)
         return output
 
     def conv2d_trans_model(self):
-        conv2d_trans_out = Conv2DTranspose(filters=8, kernel_size=(3, 3))(self.input)
-        output = Model([self.input], conv2d_trans_out)
+        input_tensor = Conv2DTranspose(filters=8, kernel_size=(3, 3))(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def depth_to_space_model(self):
-        depth_to_space_out = tf.nn.depth_to_space(self.input, 2)
-        output = Model([self.input], depth_to_space_out)
+        input_tensor = tf.nn.depth_to_space(self.input, 2)
+        output = Model([self.input], input_tensor)
         return output
 
     def exp_model(self):
-        exp_out = tf.math.exp(self.input)
-        output = Model([self.input], exp_out)
+        input_tensor = tf.math.exp(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def greater_model(self):
-        greater_out = tf.math.greater(self.input, self.input)
-        output = Model([self.input], greater_out)
+        input_tensor = tf.math.greater(self.input, self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def greater_equal_model(self):
-        greater_equal_out = tf.math.greater_equal(self.input, self.input)
-        output = Model([self.input], greater_equal_out)
+        input_tensor = tf.math.greater_equal(self.input, self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def leaky_relu_model(self):
-        leaky_relu_out = LeakyReLU(alpha=0.3)(self.input)
-        output = Model([self.input], leaky_relu_out)
+        input_tensor = LeakyReLU(alpha=0.3)(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def less_model(self):
-        less_out = tf.math.less(self.input, self.input)
-        output = Model([self.input], less_out)
+        input_tensor = tf.math.less(self.input, self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def less_equal_model(self):
-        less_equal_out = tf.math.less_equal(self.input, self.input)
-        output = Model([self.input], less_equal_out)
+        input_tensor = tf.math.less_equal(self.input, self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def log_softmax_model(self):
-        log_softmax_out = tf.math.log_softmax(self.input)
-        output = Model([self.input], log_softmax_out)
+        input_tensor = tf.math.log_softmax(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def logical_not_model(self):
-        logical_not_out = tf.math.logical_not(self.input)
-        output = Model([self.input], logical_not_out)
+        input_tensor = tf.math.logical_not(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def logical_or_model(self):
-        logical_or_out = tf.math.logical_or(self.input, self.input)
-        output = Model([self.input], logical_or_out)
+        input_tensor = tf.math.logical_or(self.input, self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def maximum_model(self):
-        maximum_out = tf.math.maximum(self.input, self.input)
-        output = Model([self.input], maximum_out)
+        input_tensor = tf.math.maximum(self.input, self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def minimum_model(self):
-        minimum_out = tf.math.minimum(self.input, self.input)
-        output = Model([self.input], minimum_out)
+        input_tensor = tf.math.minimum(self.input, self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def mul_add_model(self):
         input_set = []
         for i in range(5):
             input_set.append(self.input)
-        mul_add_output = Add()(input_set)
-        output = Model(input_set, mul_add_output)
+        input_tensor = Add()(input_set)
+        output = Model(input_set, input_tensor)
         return output
 
     def not_equal_model(self):
-        not_equal_out = tf.math.not_equal(self.input, self.input)
-        output = Model([self.input], not_equal_out)
+        input_tensor = tf.math.not_equal(self.input, self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def power_model(self):
-        pow_out = tf.math.pow(self.input, 3)
-        output = Model([self.input], pow_out)
+        input_tensor = tf.math.pow(self.input, 3)
+        output = Model([self.input], input_tensor)
         return output
 
     def reduce_any_model(self):
-        reduce_any_out = tf.math.reduce_any(self.input)
-        output = Model([self.input], reduce_any_out)
+        input_tensor = tf.math.reduce_any(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def relu_model(self):
-        relu_out = relu(self.input)
-        output = Model([self.input], relu_out)
+        input_tensor = relu(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def relu6_model(self):
-        relu6_out = tf.nn.relu6(self.input)
-        output = Model([self.input], relu6_out)
+        input_tensor = tf.nn.relu6(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def right_shift_model(self):
-        right_shift_output = tf.bitwise.right_shift(self.input, self.input)
-        output = Model([self.input], right_shift_output)
+        input_tensor = tf.bitwise.right_shift(self.input, self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def rsqrt_model(self):
-        rsqrt_out = tf.math.rsqrt(self.input)
-        output = Model([self.input], rsqrt_out)
+        input_tensor = tf.math.rsqrt(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def sin_model(self):
-        sin_out = tf.math.sin(self.input)
-        output = Model([self.input], sin_out)
+        input_tensor = tf.math.sin(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def sigmoid_model(self):
-        sigmoid_out = sigmoid(self.input)
-        output = Model([self.input], sigmoid_out)
+        input_tensor = sigmoid(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def space_to_depth_model(self):
-        space_to_depth_out = tf.nn.space_to_depth(self.input, 2)
-        output = Model([self.input], space_to_depth_out)
+        input_tensor = tf.nn.space_to_depth(self.input, 2)
+        output = Model([self.input], input_tensor)
         return output
 
     def square_model(self):
-        square_out = tf.math.square(self.input)
-        output = Model([self.input], square_out)
+        input_tensor = tf.math.square(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def subtract_model(self):
         conv1 = Conv2D(filters=8, kernel_size=3, padding="same")(self.input)
         conv2 = Conv2D(filters=8, kernel_size=3, padding="same")(self.input)
-        subtract_out = Subtract()([conv1, conv2])
-        output = Model([self.input], subtract_out)
+        input_tensor = Subtract()([conv1, conv2])
+        output = Model([self.input], input_tensor)
         return output
 
     def tan_model(self):
-        tan_out = tf.math.tan(self.input)
-        output = Model([self.input], tan_out)
+        input_tensor = tf.math.tan(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def tanh_model(self):
-        tanh_out = tanh(self.input)
-        output = Model([self.input], tanh_out)
+        input_tensor = tanh(self.input)
+        output = Model([self.input], input_tensor)
         return output
