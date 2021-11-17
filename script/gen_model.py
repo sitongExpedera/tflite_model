@@ -8,7 +8,6 @@ from tensorflow.keras.layers import (
     LeakyReLU,
 )
 from tensorflow.keras.activations import tanh, relu, sigmoid
-from tensorflow.keras.metrics import Mean
 from tensorflow.keras.models import Model
 import tensorflow as tf
 import logging
