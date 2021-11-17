@@ -62,6 +62,8 @@ def call_gen_model(input_size, model_type, data_type):
         model = gm.reduce_max_model()
     elif model_type == "reduce_min":
         model = gm.reduce_min_model()
+    elif model_type == "reduce_prod":
+        model = gm.reduce_prod_model()
     elif model_type == "relu":
         model = gm.relu_model()
     elif model_type == "relu6":
@@ -70,14 +72,20 @@ def call_gen_model(input_size, model_type, data_type):
         model = gm.right_shift_model()
     elif model_type == "rsqrt":
         model = gm.rsqrt_model()
+    elif model_type == "segment_sum":
+        model = gm.segment_sum_model()
     elif model_type == "sin":
         model = gm.sin_model()
     elif model_type == "sigmoid":
         model = gm.sigmoid_model()
+    elif model_type == "softmax":
+        model = gm.softmax_model()
     elif model_type == "space_to_depth":
         model = gm.space_to_depth_model()
     elif model_type == "square":
         model = gm.square_model()
+    elif model_type == "sum":
+        model = gm.sum_model()
     elif model_type == "subtract":
         model = gm.subtract_model()
     elif model_type == "tan":
@@ -216,6 +224,11 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
+    def reduce_prod_model(self):
+        input_tensor = tf.math.reduce_prod(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
     def relu_model(self):
         input_tensor = relu(self.input)
         output = Model([self.input], input_tensor)
@@ -236,6 +249,12 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
+    def segment_sum_model(self):
+        segment_idx = tf.zeros(self.input.shape[0], dtype="int32")
+        input_tensor = tf.math.segment_sum(self.input, segment_idx)
+        output = Model([self.input], input_tensor)
+        return output
+
     def sin_model(self):
         input_tensor = tf.math.sin(self.input)
         output = Model([self.input], input_tensor)
@@ -246,6 +265,11 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
+    def softmax_model(self):
+        input_tensor = tf.nn.softmax(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
     def space_to_depth_model(self):
         input_tensor = tf.nn.space_to_depth(self.input, 2)
         output = Model([self.input], input_tensor)
@@ -253,6 +277,11 @@ class gen_model:
 
     def square_model(self):
         input_tensor = tf.math.square(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def sum_model(self):
+        input_tensor = tf.keras.backend.sum(self.input)
         output = Model([self.input], input_tensor)
         return output
 
