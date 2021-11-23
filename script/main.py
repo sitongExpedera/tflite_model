@@ -105,7 +105,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--num_inp", "-n", type=int, default=1, help="number of input")
     parser.add_argument("--width", "-w", type=int, default=8, help="inp_width")
-    parser.add_argument("--height", "-ht ", type=int, default=8, help="inp_height")
+    parser.add_argument("--height", "-ht", type=int, default=8, help="inp_height")
     parser.add_argument("--channels", "-c", type=int, default=8, help="inp_channels")
     args = parser.parse_args()
     num_inp = args.num_inp
