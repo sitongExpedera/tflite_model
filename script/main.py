@@ -59,6 +59,7 @@ if __name__ == "__main__":
         "abs",
         "arg_max",
         "arg_min",
+        "bilinear",
         "concat",
         "conv2d_trans",
         "depth_to_space",
