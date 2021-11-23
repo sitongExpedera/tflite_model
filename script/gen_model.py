@@ -120,7 +120,7 @@ class gen_model:
         return output
 
     def bilinear(self):
-        input_tensor = tf.image.resize(self.input, size=[self.input_size[0], self.input_size[1]])
+        input_tensor = tf.image.resize(self.input, size=[self.input_size[0] // 2, self.input_size[1] // 2])
         output = Model([self.input], input_tensor)
         return output
 
