@@ -10,8 +10,10 @@ num_inp = 1
 
 def gen_ONNX(model, model_name, save_dir, op_type, en_quant):
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    tflite_model_name = save_dir + model_name
 
     if en_quant:
+        tflite_model_name += "_no_quant"
         converter.optimizations = [tf.lite.Optimize.DEFAULT]
         if op_type == "float32":
             converter.representative_dataset = representative_float_dataset_gen
@@ -25,8 +27,7 @@ def gen_ONNX(model, model_name, save_dir, op_type, en_quant):
             tf.lite.OpsSet.TFLITE_BUILTINS,
         ]
     tflite_model = converter.convert()
-
-    tflite_model_name = save_dir + model_name + ".tflite"
+    tflite_model_name += ".tflite"
     open(tflite_model_name, "wb").write(tflite_model)
     print(tflite_model_name)
 
