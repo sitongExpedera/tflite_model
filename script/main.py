@@ -13,7 +13,7 @@ def gen_ONNX(model, model_name, save_dir, op_type, en_quant):
     tflite_model_name = save_dir + model_name
 
     if en_quant:
-        tflite_model_name += "_no_quant"
+        tflite_model_name += "_quant"
         converter.optimizations = [tf.lite.Optimize.DEFAULT]
         if op_type == "float32":
             converter.representative_dataset = representative_float_dataset_gen
