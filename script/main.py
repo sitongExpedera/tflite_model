@@ -8,24 +8,26 @@ input_shape = [1, 8, 8, 8]
 num_inp = 1
 
 
-def gen_ONNX(model, model_name, save_dir, op_type):
+def gen_ONNX(model, model_name, save_dir, op_type, en_quant):
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
-    converter.optimizations = [tf.lite.Optimize.DEFAULT]
-    if op_type == "float32":
-        converter.representative_dataset = representative_float_dataset_gen
-    elif op_type == "bool":
-        converter.representative_dataset = representative_bool_dataset_gen
-    elif op_type == "int32":
-        converter.representative_dataset = representative_int_dataset_gen
-    converter.target_spec.supported_ops = [
-        tf.lite.OpsSet.TFLITE_BUILTINS_INT8,
-        tf.lite.OpsSet.SELECT_TF_OPS,
-        tf.lite.OpsSet.TFLITE_BUILTINS,
-    ]
-    tflite_quant_model = converter.convert()
+
+    if en_quant:
+        converter.optimizations = [tf.lite.Optimize.DEFAULT]
+        if op_type == "float32":
+            converter.representative_dataset = representative_float_dataset_gen
+        elif op_type == "bool":
+            converter.representative_dataset = representative_bool_dataset_gen
+        elif op_type == "int32":
+            converter.representative_dataset = representative_int_dataset_gen
+        converter.target_spec.supported_ops = [
+            tf.lite.OpsSet.TFLITE_BUILTINS_INT8,
+            tf.lite.OpsSet.SELECT_TF_OPS,
+            tf.lite.OpsSet.TFLITE_BUILTINS,
+        ]
+    tflite_model = converter.convert()
 
     tflite_model_name = save_dir + model_name + ".tflite"
-    open(tflite_model_name, "wb").write(tflite_quant_model)
+    open(tflite_model_name, "wb").write(tflite_model)
     print(tflite_model_name)
 
 
@@ -108,6 +110,7 @@ if __name__ == "__main__":
     parser.add_argument("--width", "-w", type=int, default=8, help="inp_width")
     parser.add_argument("--height", "-ht", type=int, default=8, help="inp_height")
     parser.add_argument("--channels", "-c", type=int, default=8, help="inp_channels")
+    parser.add_argument("--en_quant", "-q", type=int, default=1, help="quantize")
     args = parser.parse_args()
     num_inp = args.num_inp
     input_shape = [1, args.height, args.width, args.channels]
@@ -137,4 +140,4 @@ if __name__ == "__main__":
         + "x"
         + str(args.channels)
     )
-    gen_ONNX(model, model_name, args.out_dir, data_type)
+    gen_ONNX(model, model_name, args.out_dir, data_type, args.en_quant)
