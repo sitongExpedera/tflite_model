@@ -31,6 +31,8 @@ def call_gen_model(input_size, model_type, data_type):
         model = gm.depth_to_space_model()
     elif model_type == "exp":
         model = gm.exp_model()
+    elif model_type == "gather":
+        model = gm.gather_model()
     elif model_type == "greater":
         model = gm.greater_model()
     elif model_type == "greater_equal":
@@ -144,6 +146,11 @@ class gen_model:
 
     def exp_model(self):
         input_tensor = tf.math.exp(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def gather_model(self):
+        input_tensor = tf.gather(self.input, axis=0, indices=[0])
         output = Model([self.input], input_tensor)
         return output
 

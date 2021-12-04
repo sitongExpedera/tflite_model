@@ -67,6 +67,7 @@ if __name__ == "__main__":
         "conv2d_trans",
         "depth_to_space",
         "exp",
+        "gather",
         "greater",
         "greater_equal",
         "leaky_relu",
