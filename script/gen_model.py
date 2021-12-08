@@ -13,8 +13,8 @@ import tensorflow as tf
 import logging
 
 
-def call_gen_model(input_size, model_type, data_type):
-    gm = gen_model(input_size, data_type)
+def call_gen_model(args_list, model_type, data_type):
+    gm = gen_model(args_list, data_type)
     if model_type == "abs":
         model = gm.abs_model()
     elif model_type == "arg_max":
@@ -102,9 +102,13 @@ def call_gen_model(input_size, model_type, data_type):
 
 
 class gen_model:
-    def __init__(self, input_size, data_type):
-        self.input_size = input_size
+    def __init__(self, args_list, data_type):
+        self.input_size = [args_list[0], args_list[1], args_list[2]]
         self.input = Input(self.input_size, batch_size=1, dtype=data_type)
+        self.filter = args_list[3]
+        self.kernel = args_list[4]
+        self.stride = args_list[5]
+        self.padding = args_list[6]
 
     def abs_model(self):
         input_tensor = tf.math.abs(self.input)
@@ -122,7 +126,9 @@ class gen_model:
         return output
 
     def bilinear(self):
-        input_tensor = tf.image.resize(self.input, size=[self.input_size[0] // 2, self.input_size[1] // 2])
+        input_tensor = tf.image.resize(
+            self.input, size=[self.input_size[0] // 2, self.input_size[1] // 2]
+        )
         output = Model([self.input], input_tensor)
         return output
 
@@ -135,7 +141,12 @@ class gen_model:
         return output
 
     def conv2d_trans_model(self):
-        input_tensor = Conv2DTranspose(filters=8, kernel_size=(3, 3))(self.input)
+        input_tensor = Conv2DTranspose(
+            filters=self.filter,
+            strides=self.stride,
+            kernel_size=self.kernel,
+            padding=self.padding,
+        )(self.input)
         output = Model([self.input], input_tensor)
         return output
 

@@ -113,6 +113,10 @@ if __name__ == "__main__":
     parser.add_argument("--height", "-ht", type=int, default=8, help="inp_height")
     parser.add_argument("--channels", "-c", type=int, default=8, help="inp_channels")
     parser.add_argument("--en_quant", "-q", type=int, default=1, help="quantize")
+    parser.add_argument("--filter", "-f", type=int, default=8, help="filter")
+    parser.add_argument("--kernel", "-k", type=int, default=3, help="kernel")
+    parser.add_argument("--stride", "-s", type=int, default=1, help="stride")
+    parser.add_argument("--padding", "-p", type=str, default="valid", help="padding")
     args = parser.parse_args()
     num_inp = args.num_inp
     input_shape = [1, args.height, args.width, args.channels]
@@ -128,18 +132,37 @@ if __name__ == "__main__":
     else:
         data_type = "float32"
 
-    model = gm.call_gen_model(
-        [args.height, args.width, args.channels], args.model.lower(), data_type
-    )
+    args_list = [
+        args.height,
+        args.width,
+        args.channels,
+        args.filter,
+        args.kernel,
+        args.stride,
+        args.padding,
+    ]
+
+    model = gm.call_gen_model(args_list, args.model.lower(), data_type)
 
     model.summary()
     model_name = (
         args.model.lower()
-        + "_"
+        + "_h"
         + str(args.height)
-        + "x"
+        + "_w"
         + str(args.width)
-        + "x"
+        + "_c"
         + str(args.channels)
     )
+    if "conv" in args.model.lower():
+        model_name += (
+            "_f"
+            + str(args.filter)
+            + "_k"
+            + str(args.kernel)
+            + "_s"
+            + str(args.stride)
+            + "_"
+            + args.padding.lower()
+        )
     gen_ONNX(model, model_name, args.out_dir, data_type, args.en_quant)
