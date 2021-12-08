@@ -310,9 +310,7 @@ class gen_model:
         return output
 
     def subtract_model(self):
-        conv1 = Conv2D(filters=8, kernel_size=3, padding="same")(self.input)
-        conv2 = Conv2D(filters=8, kernel_size=3, padding="same")(self.input)
-        input_tensor = Subtract()([conv1, conv2])
+        input_tensor = Subtract()([self.input, self.input])
         output = Model([self.input], input_tensor)
         return output
 

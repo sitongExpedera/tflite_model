@@ -108,15 +108,15 @@ if __name__ == "__main__":
         default="/home/sitong/tflite_model/models/",
         help="model dir",
     )
-    parser.add_argument("--num_inp", "-n", type=int, default=1, help="number of input")
-    parser.add_argument("--width", "-w", type=int, default=8, help="inp_width")
-    parser.add_argument("--height", "-ht", type=int, default=8, help="inp_height")
-    parser.add_argument("--channels", "-c", type=int, default=8, help="inp_channels")
-    parser.add_argument("--en_quant", "-q", type=int, default=1, help="quantize")
-    parser.add_argument("--filter", "-f", type=int, default=8, help="filter")
-    parser.add_argument("--kernel", "-k", type=int, default=3, help="kernel")
-    parser.add_argument("--stride", "-s", type=int, default=1, help="stride")
-    parser.add_argument("--padding", "-p", type=str, default="valid", help="padding")
+    parser.add_argument("--num_inp", "-n", type=int, default=1)
+    parser.add_argument("--width", "-w", type=int, default=8)
+    parser.add_argument("--height", "-ht", type=int, default=8)
+    parser.add_argument("--channels", "-c", type=int, default=8)
+    parser.add_argument("--en_quant", "-q", type=int, default=1)
+    parser.add_argument("--filter", "-f", type=int, default=8)
+    parser.add_argument("--kernel", "-k", type=int, default=3)
+    parser.add_argument("--stride", "-s", type=int, default=1)
+    parser.add_argument("--padding", "-p", type=str, default="valid")
     args = parser.parse_args()
     num_inp = args.num_inp
     input_shape = [1, args.height, args.width, args.channels]
