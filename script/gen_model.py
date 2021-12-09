@@ -1,3 +1,4 @@
+from operator import mod
 from tensorflow.keras.layers import (
     Input,
     Conv2D,
@@ -6,6 +7,7 @@ from tensorflow.keras.layers import (
     Add,
     Subtract,
     LeakyReLU,
+    GlobalAveragePooling2D,
 )
 from tensorflow.keras.activations import tanh, relu, sigmoid
 from tensorflow.keras.models import Model
@@ -33,6 +35,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.exp_model()
     elif model_type == "gather":
         model = gm.gather_model()
+    elif model_type == "global_average_2d":
+        model = gm.global_average_2d_model()
     elif model_type == "greater":
         model = gm.greater_model()
     elif model_type == "greater_equal":
@@ -161,7 +165,12 @@ class gen_model:
         return output
 
     def gather_model(self):
-        input_tensor = tf.gather(self.input, axis=0, indices=[0])
+        input_tensor = tf.gather(self.input, axis=1, indices=[1, 2, 3])
+        output = Model([self.input], input_tensor)
+        return output
+
+    def global_average_2d_model(self):
+        input_tensor = GlobalAveragePooling2D()(self.input)
         output = Model([self.input], input_tensor)
         return output
 

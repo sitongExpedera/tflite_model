@@ -68,6 +68,7 @@ if __name__ == "__main__":
         "depth_to_space",
         "exp",
         "gather",
+        "global_average_2d",
         "greater",
         "greater_equal",
         "leaky_relu",
