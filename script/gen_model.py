@@ -5,6 +5,7 @@ from tensorflow.keras.layers import (
     Conv2DTranspose,
     Concatenate,
     Add,
+    Multiply,
     Subtract,
     LeakyReLU,
     GlobalAveragePooling2D,
@@ -59,6 +60,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.minimum_model()
     elif model_type == "mul_add":
         model = gm.mul_add_model()
+    elif model_type == "multiply":
+        model = gm.multiply_model()
     elif model_type == "not_equal":
         model = gm.not_equal_model()
     elif model_type == "power":
@@ -165,7 +168,7 @@ class gen_model:
         return output
 
     def gather_model(self):
-        input_tensor = tf.gather(self.input, axis=1, indices=[1, 2, 3])
+        input_tensor = tf.gather(self.input, axis=2, indices=[0, 3, 1, 1, 2, 3])
         output = Model([self.input], input_tensor)
         return output
 
@@ -230,6 +233,11 @@ class gen_model:
             input_set.append(self.input)
         input_tensor = Add()(input_set)
         output = Model(input_set, input_tensor)
+        return output
+
+    def multiply_model(self):
+        input_tensor = Multiply()([self.input, self.input])
+        output = Model([self.input], input_tensor)
         return output
 
     def not_equal_model(self):

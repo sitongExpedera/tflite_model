@@ -80,6 +80,7 @@ if __name__ == "__main__":
         "maximum",
         "minimum",
         "mul_add",
+        "multiply",
         "not_equal",
         "power",
         "reduce_any",
