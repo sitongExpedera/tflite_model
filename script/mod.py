@@ -29,7 +29,7 @@ def get_mod_from_tflite(model_name):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, default="")
+    parser.add_argument("--model", "-m", type=str, default="")
     parser.add_argument("--width", "-w", type=int, default=8, help="inp_width")
     parser.add_argument("--height", "-ht", type=int, default=8, help="inp_height")
     parser.add_argument("--channels", "-c", type=int, default=8, help="inp_channels")

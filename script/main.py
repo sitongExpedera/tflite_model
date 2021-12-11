@@ -3,6 +3,7 @@ import argparse
 import gen_model as gm
 import numpy as np
 import tensorflow as tf
+import os
 
 input_shape = [1, 8, 8, 8]
 num_inp = 1
@@ -107,8 +108,7 @@ if __name__ == "__main__":
         "--out_dir",
         "-o",
         type=str,
-        default="/home/sitong/tflite_model/models/",
-        help="model dir",
+        default=os.getcwd() + "/models/",
     )
     parser.add_argument("--num_inp", "-n", type=int, default=1)
     parser.add_argument("--width", "-w", type=int, default=8)
