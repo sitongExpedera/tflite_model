@@ -90,6 +90,7 @@ if __name__ == "__main__":
         "reduce_prod",
         "relu",
         "relu6",
+        "reshape",
         "right_shift",
         "rsqrt",
         "segment_sum",

@@ -78,6 +78,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.relu_model()
     elif model_type == "relu6":
         model = gm.relu6_model()
+    elif model_type == "reshape":
+        model = gm.reshape_model()
     elif model_type == "right_shift":
         model = gm.right_shift_model()
     elif model_type == "rsqrt":
@@ -280,6 +282,13 @@ class gen_model:
 
     def relu6_model(self):
         input_tensor = tf.nn.relu6(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def reshape_model(self):
+        input_tensor = tf.reshape(
+            self.input, shape=[1, self.input_size[0] // 2, self.input_size[1] * 2, -1]
+        )
         output = Model([self.input], input_tensor)
         return output
 
