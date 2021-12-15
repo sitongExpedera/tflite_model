@@ -97,6 +97,7 @@ if __name__ == "__main__":
         "sigmoid",
         "softmax",
         "space_to_depth",
+        "softmax",
         "square",
         "sum",
         "subtract",

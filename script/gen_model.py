@@ -92,6 +92,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.softmax_model()
     elif model_type == "space_to_depth":
         model = gm.space_to_depth_model()
+    elif model_type == "softmax":
+        model = gm.softmax_model()
     elif model_type == "square":
         model = gm.square_model()
     elif model_type == "sum":
@@ -112,6 +114,7 @@ class gen_model:
     def __init__(self, args_list, data_type):
         self.input_size = [args_list[0], args_list[1], args_list[2]]
         self.input = Input(self.input_size, batch_size=1, dtype=data_type)
+        self.input_d2 = Input(args_list[2], batch_size=1, dtype=data_type)
         self.filter = args_list[3]
         self.kernel = args_list[4]
         self.stride = args_list[5]
@@ -314,6 +317,11 @@ class gen_model:
     def space_to_depth_model(self):
         input_tensor = tf.nn.space_to_depth(self.input, 2)
         output = Model([self.input], input_tensor)
+        return output
+
+    def softmax_model(self):
+        input_tensor = tf.nn.softmax(self.input_d2)
+        output = Model([self.input_d2], input_tensor)
         return output
 
     def square_model(self):
