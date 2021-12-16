@@ -66,6 +66,7 @@ if __name__ == "__main__":
         "bilinear",
         "concat",
         "conv2d_trans",
+        "dense",
         "depth_to_space",
         "exp",
         "gather",

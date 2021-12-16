@@ -9,6 +9,7 @@ from tensorflow.keras.layers import (
     Subtract,
     LeakyReLU,
     GlobalAveragePooling2D,
+    Dense,
 )
 from tensorflow.keras.activations import tanh, relu, sigmoid
 from tensorflow.keras.models import Model
@@ -30,6 +31,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.concat_model()
     elif model_type == "conv2d_trans":
         model = gm.conv2d_trans_model()
+    elif model_type == "dense":
+        model = gm.dense_model()
     elif model_type == "depth_to_space":
         model = gm.depth_to_space_model()
     elif model_type == "exp":
@@ -160,6 +163,13 @@ class gen_model:
             padding=self.padding,
         )(self.input)
         output = Model([self.input], input_tensor)
+        return output
+
+    def dense_model(self):
+        input_tensor = Dense(
+            1, use_bias=True, bias_initializer=tf.keras.initializers.HeNormal()
+        )(self.input_d2)
+        output = Model([self.input_d2], input_tensor)
         return output
 
     def depth_to_space_model(self):
