@@ -29,6 +29,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.bilinear()
     elif model_type == "concat":
         model = gm.concat_model()
+    elif model_type == "conv2d_m":
+        model = gm.conv2d_m_model()
     elif model_type == "conv2d_trans":
         model = gm.conv2d_trans_model()
     elif model_type == "dense":
@@ -97,8 +99,6 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.softmax_model()
     elif model_type == "space_to_depth":
         model = gm.space_to_depth_model()
-    elif model_type == "softmax":
-        model = gm.softmax_model()
     elif model_type == "square":
         model = gm.square_model()
     elif model_type == "sum":
@@ -153,6 +153,51 @@ class gen_model:
             input_set.append(self.input)
         input_tensor = Concatenate()(input_set)
         output = Model(input_set, input_tensor)
+        return output
+
+    def conv2d_m_model(self):
+        conv_0 = Conv2D(
+            filters=self.filter,
+            kernel_size=self.kernel,
+            strides=self.stride,
+            name="conv0",
+            use_bias=True,
+            padding=self.padding,
+        )(self.input)
+        conv_1 = Conv2D(
+            filters=self.filter,
+            kernel_size=self.kernel,
+            strides=self.stride,
+            name="conv1",
+            use_bias=True,
+            padding=self.padding,
+        )(conv_0)
+        conv_2 = Conv2D(
+            filters=self.filter,
+            kernel_size=self.kernel,
+            strides=self.stride,
+            name="conv2",
+            use_bias=True,
+            padding=self.padding,
+        )(conv_1)
+        conv_3 = Conv2D(
+            filters=self.filter,
+            kernel_size=self.kernel,
+            strides=self.stride,
+            name="conv3",
+            use_bias=True,
+            padding=self.padding,
+        )(conv_2)
+        conv_4 = Conv2D(
+            filters=self.filter,
+            kernel_size=self.kernel,
+            strides=self.stride,
+            name="conv4",
+            use_bias=True,
+            padding=self.padding,
+        )(self.input)
+        input_tensor = Add()([conv_3, conv_4])
+        output = Model([self.input], input_tensor)
         return output
 
     def conv2d_trans_model(self):
@@ -336,11 +381,6 @@ class gen_model:
     def space_to_depth_model(self):
         input_tensor = tf.nn.space_to_depth(self.input, 2)
         output = Model([self.input], input_tensor)
-        return output
-
-    def softmax_model(self):
-        input_tensor = tf.nn.softmax(self.input_d2)
-        output = Model([self.input_d2], input_tensor)
         return output
 
     def square_model(self):
