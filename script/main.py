@@ -9,7 +9,7 @@ input_shape = [1, 8, 8, 8]
 num_inp = 1
 
 
-def gen_ONNX(model, model_name, save_dir, op_type, en_quant):
+def gen_tflite(model, model_name, save_dir, op_type, en_quant):
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
     tflite_model_name = save_dir + model_name
 
@@ -170,4 +170,4 @@ if __name__ == "__main__":
             + "_"
             + args.padding.lower()
         )
-    gen_ONNX(model, model_name, args.out_dir, data_type, args.en_quant)
+    gen_tflite(model, model_name, args.out_dir, data_type, args.en_quant)
