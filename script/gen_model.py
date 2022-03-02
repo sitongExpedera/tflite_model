@@ -21,6 +21,8 @@ def call_gen_model(args_list, model_type, data_type):
     gm = gen_model(args_list, data_type)
     if model_type == "abs":
         model = gm.abs_model()
+    elif model_type == "add_d2":
+        model = gm.add_d2_model()
     elif model_type == "arg_max":
         model = gm.arg_max_model()
     elif model_type == "arg_min":
@@ -128,6 +130,11 @@ class gen_model:
     def abs_model(self):
         input_tensor = tf.math.abs(self.input)
         output = Model([self.input], input_tensor)
+        return output
+
+    def add_d2_model(self):
+        input_tensor = Add()([self.input_d2, self.input_d2])
+        output = Model([self.input_d2], input_tensor)
         return output
 
     def arg_max_model(self):

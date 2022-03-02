@@ -7,9 +7,10 @@ import os
 
 input_shape = [1, 8, 8, 8]
 num_inp = 1
+nbits = 8
 
 
-def gen_tflite(model, model_name, save_dir, op_type, en_quant):
+def gen_tflite(model, model_name, save_dir, op_type, en_quant, quant_layer):
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
     tflite_model_name = save_dir + model_name
 
@@ -22,11 +23,30 @@ def gen_tflite(model, model_name, save_dir, op_type, en_quant):
             converter.representative_dataset = representative_bool_dataset_gen
         elif op_type == "int32":
             converter.representative_dataset = representative_int_dataset_gen
-        converter.target_spec.supported_ops = [
-            tf.lite.OpsSet.TFLITE_BUILTINS_INT8,
-            tf.lite.OpsSet.SELECT_TF_OPS,
-            tf.lite.OpsSet.TFLITE_BUILTINS,
-        ]
+        if nbits == 8:
+            converter.target_spec.supported_ops = [
+                tf.lite.OpsSet.TFLITE_BUILTINS_INT8,
+                tf.lite.OpsSet.SELECT_TF_OPS,
+                tf.lite.OpsSet.TFLITE_BUILTINS,
+            ]
+            if quant_layer:
+                converter.experimental_new_converter = True
+                converter.target_spec.supported_types = [tf.int8]
+                converter.inference_input_type = tf.int8
+                converter.inference_output_type = tf.int8
+            tflite_model_name += "_8bits"
+        elif nbits == 16:
+            converter.target_spec.supported_ops = [
+                tf.lite.OpsSet.EXPERIMENTAL_TFLITE_BUILTINS_ACTIVATIONS_INT16_WEIGHTS_INT8,
+                tf.lite.OpsSet.SELECT_TF_OPS,
+                tf.lite.OpsSet.TFLITE_BUILTINS,
+            ]
+            if quant_layer:
+                converter.experimental_new_converter = True
+                converter.target_spec.supported_types = [tf.int16]
+                converter.inference_input_type = tf.int16
+                converter.inference_output_type = tf.int16
+            tflite_model_name += "_16bits"
     tflite_model = converter.convert()
     tflite_model_name += ".tflite"
     open(tflite_model_name, "wb").write(tflite_model)
@@ -61,6 +81,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     model_choices = [
         "abs",
+        "add_d2",
         "arg_max",
         "arg_min",
         "bilinear",
@@ -122,6 +143,14 @@ if __name__ == "__main__":
     parser.add_argument("--kernel", "-k", type=int, default=3)
     parser.add_argument("--stride", "-s", type=int, default=1)
     parser.add_argument("--padding", "-p", type=str, default="valid")
+    parser.add_argument("--nbits", "-nb", type=int, default=8)
+    parser.add_argument(
+        "--quant_layer",
+        "-ql",
+        action="store_true",
+        default=False,
+        help="includes quantize and dequantize layers",
+    )
     args = parser.parse_args()
     num_inp = args.num_inp
     input_shape = [1, args.height, args.width, args.channels]
@@ -147,6 +176,8 @@ if __name__ == "__main__":
         args.padding,
     ]
 
+    nbits = args.nbits
+
     model = gm.call_gen_model(args_list, args.model.lower(), data_type)
 
     model.summary()
@@ -170,4 +201,6 @@ if __name__ == "__main__":
             + "_"
             + args.padding.lower()
         )
-    gen_tflite(model, model_name, args.out_dir, data_type, args.en_quant)
+    gen_tflite(
+        model, model_name, args.out_dir, data_type, args.en_quant, args.quant_layer
+    )
