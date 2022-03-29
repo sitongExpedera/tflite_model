@@ -10,6 +10,7 @@ from tensorflow.keras.layers import (
     LeakyReLU,
     GlobalAveragePooling2D,
     Dense,
+    SeparableConv2D,
 )
 from tensorflow.keras.activations import tanh, relu, sigmoid
 from tensorflow.keras.models import Model
@@ -21,8 +22,8 @@ def call_gen_model(args_list, model_type, data_type):
     gm = gen_model(args_list, data_type)
     if model_type == "abs":
         model = gm.abs_model()
-    elif model_type == "add_d2":
-        model = gm.add_d2_model()
+    elif model_type == "add":
+        model = gm.add_model()
     elif model_type == "arg_max":
         model = gm.arg_max_model()
     elif model_type == "arg_min":
@@ -31,8 +32,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.bilinear()
     elif model_type == "concat":
         model = gm.concat_model()
-    elif model_type == "conv2d_m":
-        model = gm.conv2d_m_model()
+    elif model_type == "conv2d":
+        model = gm.conv2d_model()
     elif model_type == "conv2d_trans":
         model = gm.conv2d_trans_model()
     elif model_type == "dense":
@@ -93,6 +94,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.rsqrt_model()
     elif model_type == "segment_sum":
         model = gm.segment_sum_model()
+    elif model_type == "separable_conv2d":
+        model = gm.separable_conv2d_model()
     elif model_type == "sin":
         model = gm.sin_model()
     elif model_type == "sigmoid":
@@ -121,6 +124,7 @@ class gen_model:
     def __init__(self, args_list, data_type):
         self.input_size = [args_list[0], args_list[1], args_list[2]]
         self.input = Input(self.input_size, batch_size=1, dtype=data_type)
+        self.input2 = Input(self.input_size, batch_size=1, dtype=data_type)
         self.input_d2 = Input(args_list[2], batch_size=1, dtype=data_type)
         self.filter = args_list[3]
         self.kernel = args_list[4]
@@ -132,9 +136,9 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
-    def add_d2_model(self):
-        input_tensor = Add()([self.input_d2, self.input_d2])
-        output = Model([self.input_d2], input_tensor)
+    def add_model(self):
+        input_tensor = Add()([self.input, self.input2])
+        output = Model([self.input, self.input2], input_tensor)
         return output
 
     def arg_max_model(self):
@@ -162,8 +166,8 @@ class gen_model:
         output = Model(input_set, input_tensor)
         return output
 
-    def conv2d_m_model(self):
-        conv_0 = Conv2D(
+    def conv2d_model(self):
+        input_tensor = Conv2D(
             filters=self.filter,
             kernel_size=self.kernel,
             strides=self.stride,
@@ -171,39 +175,6 @@ class gen_model:
             use_bias=True,
             padding=self.padding,
         )(self.input)
-        conv_1 = Conv2D(
-            filters=self.filter,
-            kernel_size=self.kernel,
-            strides=self.stride,
-            name="conv1",
-            use_bias=True,
-            padding=self.padding,
-        )(conv_0)
-        conv_2 = Conv2D(
-            filters=self.filter,
-            kernel_size=self.kernel,
-            strides=self.stride,
-            name="conv2",
-            use_bias=True,
-            padding=self.padding,
-        )(conv_1)
-        conv_3 = Conv2D(
-            filters=self.filter,
-            kernel_size=self.kernel,
-            strides=self.stride,
-            name="conv3",
-            use_bias=True,
-            padding=self.padding,
-        )(conv_2)
-        conv_4 = Conv2D(
-            filters=self.filter,
-            kernel_size=self.kernel,
-            strides=self.stride,
-            name="conv4",
-            use_bias=True,
-            padding=self.padding,
-        )(self.input)
-        input_tensor = Add()([conv_3, conv_4])
         output = Model([self.input], input_tensor)
         return output
 
@@ -367,6 +338,18 @@ class gen_model:
     def segment_sum_model(self):
         segment_idx = tf.zeros(self.input.shape[0], dtype="int32")
         input_tensor = tf.math.segment_sum(self.input, segment_idx)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def separable_conv2d_model(self):
+        input_tensor = SeparableConv2D(
+            filters=self.filter,
+            kernel_size=self.kernel,
+            strides=self.stride,
+            name="separable_conv0",
+            use_bias=True,
+            padding=self.padding,
+        )(self.input)
         output = Model([self.input], input_tensor)
         return output
 

@@ -56,7 +56,7 @@ def gen_tflite(model, model_name, save_dir, op_type, en_quant, quant_layer):
 def representative_float_dataset_gen():
     input_set = []
     for _ in range(num_inp):
-        input_data = np.array(np.random.random_sample(input_shape), dtype="float32")
+        input_data = 5 * np.array(np.random.random_sample(input_shape), dtype="float32")
         input_set.append(input_data)
     yield input_set
 
@@ -64,7 +64,7 @@ def representative_float_dataset_gen():
 def representative_bool_dataset_gen():
     input_set = []
     for _ in range(num_inp):
-        input_data = np.array(np.random.random_sample(input_shape), dtype="bool")
+        input_data = 5 * np.array(np.random.random_sample(input_shape), dtype="bool")
         input_set.append(input_data)
     yield input_set
 
@@ -72,7 +72,7 @@ def representative_bool_dataset_gen():
 def representative_int_dataset_gen():
     input_set = []
     for _ in range(num_inp):
-        input_data = np.array(np.random.random_sample(input_shape), dtype="int32")
+        input_data = 5 * np.array(np.random.random_sample(input_shape), dtype="int32")
         input_set.append(input_data)
     yield input_set
 
@@ -81,12 +81,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     model_choices = [
         "abs",
-        "add_d2",
+        "add",
         "arg_max",
         "arg_min",
         "bilinear",
         "concat",
-        "conv2d_m",
+        "conv2d",
         "conv2d_trans",
         "dense",
         "depth_to_space",
@@ -117,6 +117,7 @@ if __name__ == "__main__":
         "right_shift",
         "rsqrt",
         "segment_sum",
+        "separable_conv2d",
         "sin",
         "sigmoid",
         "softmax",
