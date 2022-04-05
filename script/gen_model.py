@@ -64,6 +64,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.logical_or_model()
     elif model_type == "maximum":
         model = gm.maximum_model()
+    elif model_type == "mean":
+        model = gm.mean_model()
     elif model_type == "minimum":
         model = gm.minimum_model()
     elif model_type == "mul_add":
@@ -104,6 +106,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.softmax_model()
     elif model_type == "space_to_depth":
         model = gm.space_to_depth_model()
+    elif model_type == "sqrt":
+        model = gm.sqrt_model()
     elif model_type == "square":
         model = gm.square_model()
     elif model_type == "sum":
@@ -211,7 +215,7 @@ class gen_model:
         return output
 
     def global_average_2d_model(self):
-        input_tensor = GlobalAveragePooling2D()(self.input)
+        input_tensor = GlobalAveragePooling2D(keepdims=True)(self.input)
         output = Model([self.input], input_tensor)
         return output
 
@@ -257,6 +261,11 @@ class gen_model:
 
     def maximum_model(self):
         input_tensor = tf.math.maximum(self.input, self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def mean_model(self):
+        input_tensor = tf.math.reduce_mean(self.input, axis=3, keepdims=True)
         output = Model([self.input], input_tensor)
         return output
 
@@ -375,6 +384,11 @@ class gen_model:
 
     def square_model(self):
         input_tensor = tf.math.square(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def sqrt_model(self):
+        input_tensor = tf.math.sqrt(self.input)
         output = Model([self.input], input_tensor)
         return output
 
