@@ -12,7 +12,7 @@ from tensorflow.keras.layers import (
     Dense,
     SeparableConv2D,
 )
-from tensorflow.keras.activations import tanh, relu, sigmoid
+from tensorflow.keras.activations import tanh, relu, sigmoid, swish
 from tensorflow.keras.models import Model
 import tensorflow as tf
 import logging
@@ -114,6 +114,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.sum_model()
     elif model_type == "subtract":
         model = gm.subtract_model()
+    elif model_type == "swish":
+        model = gm.swish_model()
     elif model_type == "tan":
         model = gm.tan_model()
     elif model_type == "tanh":
@@ -399,6 +401,11 @@ class gen_model:
 
     def subtract_model(self):
         input_tensor = Subtract()([self.input, self.input])
+        output = Model([self.input], input_tensor)
+        return output
+
+    def swish_model(self):
+        input_tensor = swish(self.input)
         output = Model([self.input], input_tensor)
         return output
 

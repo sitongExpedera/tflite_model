@@ -127,6 +127,7 @@ if __name__ == "__main__":
         "sqrt",
         "sum",
         "subtract",
+        "swish",
         "tan",
         "tanh",
     ]
