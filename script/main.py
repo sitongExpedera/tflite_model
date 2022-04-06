@@ -91,6 +91,7 @@ if __name__ == "__main__":
         "dense",
         "depth_to_space",
         "exp",
+        "expand_dims",
         "gather",
         "global_average_2d",
         "greater",
@@ -125,6 +126,7 @@ if __name__ == "__main__":
         "space_to_depth",
         "square",
         "sqrt",
+        "stack",
         "sum",
         "subtract",
         "swish",
@@ -148,6 +150,7 @@ if __name__ == "__main__":
     parser.add_argument("--stride", "-s", type=int, default=1)
     parser.add_argument("--padding", "-p", type=str, default="valid")
     parser.add_argument("--nbits", "-nb", type=int, default=8)
+    parser.add_argument("--list", "-l", action="store_true")
     parser.add_argument(
         "--quant_layer",
         "-ql",
@@ -158,6 +161,20 @@ if __name__ == "__main__":
     args = parser.parse_args()
     num_inp = args.num_inp
     input_shape = [1, args.height, args.width, args.channels]
+
+    if args.list:
+        print("Supported models:")
+        model_in_line = 1
+        for model in model_choices:
+            temp = format(model, "<20s")
+            if model_in_line < 5:
+                print(temp, end="")
+                model_in_line += 1
+            else:
+                print(temp)
+                model_in_line = 1
+        print("")
+        exit(0)
 
     if (
         args.model.lower() == "logical_not"
@@ -178,6 +195,7 @@ if __name__ == "__main__":
         args.kernel,
         args.stride,
         args.padding,
+        args.num_inp,
     ]
 
     nbits = args.nbits

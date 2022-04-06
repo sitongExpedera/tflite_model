@@ -42,6 +42,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.depth_to_space_model()
     elif model_type == "exp":
         model = gm.exp_model()
+    elif model_type == "expand_dims":
+        model = gm.expand_dims_model()
     elif model_type == "gather":
         model = gm.gather_model()
     elif model_type == "global_average_2d":
@@ -110,6 +112,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.sqrt_model()
     elif model_type == "square":
         model = gm.square_model()
+    elif model_type == "stack":
+        model = gm.stack_model()
     elif model_type == "sum":
         model = gm.sum_model()
     elif model_type == "subtract":
@@ -136,6 +140,7 @@ class gen_model:
         self.kernel = args_list[4]
         self.stride = args_list[5]
         self.padding = args_list[6]
+        self.num_input = args_list[7]
 
     def abs_model(self):
         input_tensor = tf.math.abs(self.input)
@@ -166,8 +171,9 @@ class gen_model:
 
     def concat_model(self):
         input_set = []
-        for i in range(5):
-            input_set.append(self.input)
+        for i in range(self.num_input):
+            input = Input(self.input_size, batch_size=1, dtype=tf.float32)
+            input_set.append(input)
         input_tensor = Concatenate()(input_set)
         output = Model(input_set, input_tensor)
         return output
@@ -208,6 +214,11 @@ class gen_model:
 
     def exp_model(self):
         input_tensor = tf.math.exp(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def expand_dims_model(self):
+        input_tensor = tf.expand_dims(self.input, axis=2)
         output = Model([self.input], input_tensor)
         return output
 
@@ -392,6 +403,15 @@ class gen_model:
     def sqrt_model(self):
         input_tensor = tf.math.sqrt(self.input)
         output = Model([self.input], input_tensor)
+        return output
+
+    def stack_model(self):
+        input_set = []
+        for i in range(self.num_input):
+            input = Input(self.input_size, batch_size=1, dtype=tf.float32)
+            input_set.append(input)
+        input_tensor = tf.stack(input_set, axis=2)
+        output = Model(input_set, input_tensor)
         return output
 
     def sum_model(self):
