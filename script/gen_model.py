@@ -28,8 +28,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.arg_max_model()
     elif model_type == "arg_min":
         model = gm.arg_min_model()
-    elif model_type == "bilinear":
-        model = gm.bilinear()
+    elif model_type == "bilinear_resize":
+        model = gm.bilinear_resize_model()
     elif model_type == "concat":
         model = gm.concat_model()
     elif model_type == "conv2d":
@@ -162,7 +162,7 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
-    def bilinear(self):
+    def bilinear_resize_model(self):
         input_tensor = tf.image.resize(
             self.input, size=[self.input_size[0] // 2, self.input_size[1] // 2]
         )

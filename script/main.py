@@ -84,7 +84,7 @@ if __name__ == "__main__":
         "add",
         "arg_max",
         "arg_min",
-        "bilinear",
+        "bilinear_resize",
         "concat",
         "conv2d",
         "conv2d_trans",
@@ -165,9 +165,9 @@ if __name__ == "__main__":
     if args.list:
         print("Supported models:")
         model_in_line = 1
-        for model in model_choices:
-            temp = format(model, "<20s")
-            if model_in_line < 5:
+        for model in sorted(model_choices):
+            temp = format(model, "<30s")
+            if model_in_line < 6:
                 print(temp, end="")
                 model_in_line += 1
             else:
