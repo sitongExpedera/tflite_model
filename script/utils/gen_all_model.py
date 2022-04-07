@@ -26,7 +26,7 @@ def gen_all_model():
         if m in not_test_list:
             continue
         else:
-            args_list = [8, 8, 8, 8, data_type, 3, 1, "same", 1, 2]
+            args_list = [1, 8, 8, 8, 8, data_type, 3, 1, "same", 1, 2]
             model = gm.call_gen_model(args_list, m)
             gen_tflite(model, m, out_dir, data_type, False, None)
             print("%s is done" % m)

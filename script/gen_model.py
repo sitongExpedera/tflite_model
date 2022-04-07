@@ -141,18 +141,23 @@ def call_gen_model(args_list, model_type):
 
 class gen_model:
     def __init__(self, args_list):
-        self.input_size = [args_list[0], args_list[1], args_list[2]]
-        self.input_size_2d = [args_list[2]]
-        self.filter = args_list[3]
-        self.data_type = args_list[4]
-        self.input = Input(self.input_size, batch_size=1, dtype=self.data_type)
-        self.input2 = Input(self.input_size, batch_size=1, dtype=self.data_type)
-        self.input_2d = Input(args_list[2], batch_size=1, dtype=self.data_type)
-        self.kernel = args_list[5]
-        self.stride = args_list[6]
-        self.padding = args_list[7]
-        self.axis = args_list[8]
-        self.num_input = args_list[9]
+        self.batch = args_list[0]
+        self.height = args_list[1]
+        self.width = args_list[2]
+        self.channel = args_list[3]
+        self.filter = args_list[4]
+        self.data_type = args_list[5]
+        self.kernel = args_list[6]
+        self.stride = args_list[7]
+        self.padding = args_list[8]
+        self.axis = args_list[9]
+        self.num_inputs = args_list[10]
+
+        self.input_size = [self.height, self.width, self.channel]
+        self.input_size_2d = [self.channel]
+        self.input = Input(self.input_size, batch_size=self.batch, dtype=self.data_type)
+        self.input2 = Input(self.input_size, batch_size=self.batch, dtype=self.data_type)
+        self.input_2d = Input(self.input_size_2d, batch_size=self.batch, dtype=self.data_type)
 
     def abs_model(self):
         input_tensor = tf.math.abs(self.input)
@@ -183,8 +188,8 @@ class gen_model:
 
     def concat_model(self):
         input_set = []
-        for i in range(self.num_input):
-            input = Input(self.input_size, batch_size=1, dtype=tf.float32)
+        for i in range(self.num_inputs):
+            input = Input(self.input_size, batch_size=self.batch, dtype=tf.float32)
             input_set.append(input)
         input_tensor = Concatenate()(input_set)
         output = Model(input_set, input_tensor)
@@ -301,8 +306,8 @@ class gen_model:
 
     def mul_add_model(self):
         input_set = []
-        for i in range(self.num_input):
-            input = Input(self.input_size, batch_size=1, dtype=tf.float32)
+        for i in range(self.num_inputs):
+            input = Input(self.input_size, batch_size=self.batch, dtype=tf.float32)
             input_set.append(input)
         input_tensor = Add()(input_set)
         output = Model(input_set, input_tensor)
@@ -435,8 +440,8 @@ class gen_model:
 
     def stack_model(self):
         input_set = []
-        for i in range(self.num_input):
-            input = Input(self.input_size, batch_size=1, dtype=tf.float32)
+        for i in range(self.num_inputs):
+            input = Input(self.input_size, batch_size=self.batch, dtype=tf.float32)
             input_set.append(input)
         input_tensor = tf.stack(input_set, axis=self.axis)
         output = Model(input_set, input_tensor)
@@ -444,8 +449,8 @@ class gen_model:
 
     def stack_2d_model(self):
         input_set = []
-        for i in range(self.num_input):
-            input = Input(self.input_size_2d, batch_size=1, dtype=tf.float32)
+        for i in range(self.num_inputs):
+            input = Input(self.input_size_2d, batch_size=self.batch, dtype=tf.float32)
             input_set.append(input)
         input_tensor = tf.stack(input_set, axis=self.axis)
         output = Model(input_set, input_tensor)

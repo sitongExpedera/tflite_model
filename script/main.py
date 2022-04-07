@@ -90,6 +90,7 @@ if __name__ == "__main__":
         default=os.getcwd() + "/models/test/",
     )
     parser.add_argument("--num_inp", "-n", type=int, default=1)
+    parser.add_argument("--batch", "-b", type=int, default=1)
     parser.add_argument("--width", "-w", type=int, default=8)
     parser.add_argument("--height", "-ht", type=int, default=8)
     parser.add_argument("--channels", "-c", type=int, default=8)
@@ -111,7 +112,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     num_inp = args.num_inp
     nbits = args.nbits
-    input_shape = [1, args.height, args.width, args.channels]
+    input_shape = [args.batch, args.height, args.width, args.channels]
 
     if args.list:
         print("Supported models:")
@@ -146,6 +147,7 @@ if __name__ == "__main__":
         num_inp = 2
 
     args_list = [
+        args.batch,
         args.height,
         args.width,
         args.channels,
@@ -163,10 +165,14 @@ if __name__ == "__main__":
     model.summary()
 
     if is_2d:
-        model_name = args.model.lower() + "_c" + str(args.channels)
+        model_name = (
+            args.model.lower() + "_b" + str(args.batch) + "_c" + str(args.channels)
+        )
     else:
         model_name = (
             args.model.lower()
+            + "_b"
+            + str(args.batch)
             + "_h"
             + str(args.height)
             + "_w"
