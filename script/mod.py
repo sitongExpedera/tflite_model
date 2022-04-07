@@ -2,27 +2,22 @@
 
 from tvm import relay
 import tflite
-
 from tvm.relay.build_module import bind_params_by_name
-
-import numpy as np
 import argparse
-
 import random
+
 
 random.seed(10)
 INPUT_SHAPE = [1, 8, 8, 8]
 
 
 def get_mod_from_tflite(model_name):
-
     tflite_model = tflite.Model.GetRootAsModel(open(model_name, "rb").read(), 0)
     mod, params = relay.frontend.from_tflite(
         tflite_model,
         shape_dict={"input": INPUT_SHAPE},
         dtype_dict={"input": "float32"},
     )
-
     mod["main"] = bind_params_by_name(mod["main"], params)
     print(mod["main"])
 
