@@ -124,14 +124,19 @@ if __name__ == "__main__":
         "sigmoid",
         "softmax",
         "space_to_depth",
+        "split",
+        "split_2d",
         "square",
+        "squeeze",
         "sqrt",
         "stack",
+        "stack_2d",
         "sum",
         "subtract",
         "swish",
         "tan",
         "tanh",
+        "unstack",
     ]
     parser.add_argument("--model", "-m", choices=model_choices, type=str, default="")
     parser.add_argument(

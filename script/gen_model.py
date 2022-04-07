@@ -108,12 +108,20 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.softmax_model()
     elif model_type == "space_to_depth":
         model = gm.space_to_depth_model()
+    elif model_type == "split":
+        model = gm.split_model()
+    elif model_type == "split_2d":
+        model = gm.split_2d_model()
     elif model_type == "sqrt":
         model = gm.sqrt_model()
     elif model_type == "square":
         model = gm.square_model()
+    elif model_type == "squeeze":
+        model = gm.squeeze_model()
     elif model_type == "stack":
         model = gm.stack_model()
+    elif model_type == "stack_2d":
+        model = gm.stack_2d_model()
     elif model_type == "sum":
         model = gm.sum_model()
     elif model_type == "subtract":
@@ -124,6 +132,8 @@ def call_gen_model(args_list, model_type, data_type):
         model = gm.tan_model()
     elif model_type == "tanh":
         model = gm.tanh_model()
+    elif model_type == "unstack":
+        model = gm.unstack_model()
     else:
         logging.error("Cannot support this operator!!!")
         exit(1)
@@ -133,6 +143,7 @@ def call_gen_model(args_list, model_type, data_type):
 class gen_model:
     def __init__(self, args_list, data_type):
         self.input_size = [args_list[0], args_list[1], args_list[2]]
+        self.input_size_2d = [args_list[2]]
         self.input = Input(self.input_size, batch_size=1, dtype=data_type)
         self.input2 = Input(self.input_size, batch_size=1, dtype=data_type)
         self.input_d2 = Input(args_list[2], batch_size=1, dtype=data_type)
@@ -395,8 +406,23 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
+    def split_model(self):
+        input_tensor = tf.split(self.input, num_or_size_splits=4, axis=self.axis)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def split_2d_model(self):
+        input_tensor = tf.split(self.input_2d, num_or_size_splits=4, axis=self.axis)
+        output = Model([self.input_2d], input_tensor)
+        return output
+
     def square_model(self):
         input_tensor = tf.math.square(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def squeeze_model(self):
+        input_tensor = tf.squeeze(self.input, self.axis)
         output = Model([self.input], input_tensor)
         return output
 
@@ -410,7 +436,16 @@ class gen_model:
         for i in range(self.num_input):
             input = Input(self.input_size, batch_size=1, dtype=tf.float32)
             input_set.append(input)
-        input_tensor = tf.stack(input_set, axis=2)
+        input_tensor = tf.stack(input_set, axis=self.axis)
+        output = Model(input_set, input_tensor)
+        return output
+
+    def stack_2d_model(self):
+        input_set = []
+        for i in range(self.num_input):
+            input = Input(self.input_size_2d, batch_size=1, dtype=tf.float32)
+            input_set.append(input)
+        input_tensor = tf.stack(input_set, axis=self.axis)
         output = Model(input_set, input_tensor)
         return output
 
@@ -436,5 +471,10 @@ class gen_model:
 
     def tanh_model(self):
         input_tensor = tanh(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def unstack_model(self):
+        input_tensor = tf.unstack(self.input, axis=self.axis)
         output = Model([self.input], input_tensor)
         return output
