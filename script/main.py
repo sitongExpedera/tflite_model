@@ -4,6 +4,8 @@ import gen_model as gm
 import numpy as np
 import tensorflow as tf
 import os
+from utils.model_list import model_choices
+
 
 input_shape = [1, 8, 8, 8]
 num_inp = 1
@@ -80,71 +82,12 @@ def representative_int_dataset_gen():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    model_choices = [
-        "abs",
-        "add",
-        "arg_max",
-        "arg_min",
-        "bilinear_resize",
-        "concat",
-        "conv2d",
-        "conv2d_trans",
-        "dense",
-        "depth_to_space",
-        "exp",
-        "expand_dims",
-        "gather",
-        "global_average_2d",
-        "greater",
-        "greater_equal",
-        "leaky_relu",
-        "less",
-        "less_equal",
-        "log_softmax",
-        "logical_not",
-        "logical_or",
-        "maximum",
-        "mean",
-        "minimum",
-        "mul_add",
-        "multiply",
-        "not_equal",
-        "power",
-        "reduce_any",
-        "reduce_max",
-        "reduce_min",
-        "reduce_prod",
-        "relu",
-        "relu6",
-        "reshape",
-        "right_shift",
-        "rsqrt",
-        "segment_sum",
-        "separable_conv2d",
-        "sin",
-        "sigmoid",
-        "softmax",
-        "space_to_depth",
-        "split",
-        "split_2d",
-        "square",
-        "squeeze",
-        "sqrt",
-        "stack",
-        "stack_2d",
-        "sum",
-        "subtract",
-        "swish",
-        "tan",
-        "tanh",
-        "unstack",
-    ]
     parser.add_argument("--model", "-m", choices=model_choices, type=str, default="")
     parser.add_argument(
         "--out_dir",
         "-o",
         type=str,
-        default=os.getcwd() + "/models/",
+        default=os.getcwd() + "/models/test/",
     )
     parser.add_argument("--num_inp", "-n", type=int, default=1)
     parser.add_argument("--width", "-w", type=int, default=8)
@@ -198,11 +141,15 @@ if __name__ == "__main__":
     if "2d" in args.model and "conv2d" not in args.model:
         is_2d = True
 
+    if args.model == "minimum":
+        num_inp = 2
+
     args_list = [
         args.height,
         args.width,
         args.channels,
         args.filter,
+        data_type,
         args.kernel,
         args.stride,
         args.padding,
@@ -210,7 +157,7 @@ if __name__ == "__main__":
         args.num_inp,
     ]
 
-    model = gm.call_gen_model(args_list, args.model.lower(), data_type)
+    model = gm.call_gen_model(args_list, args.model.lower())
 
     model.summary()
 

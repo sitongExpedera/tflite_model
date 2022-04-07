@@ -1,4 +1,3 @@
-from operator import mod
 from tensorflow.keras.layers import (
     Input,
     Conv2D,
@@ -18,8 +17,8 @@ import tensorflow as tf
 import logging
 
 
-def call_gen_model(args_list, model_type, data_type):
-    gm = gen_model(args_list, data_type)
+def call_gen_model(args_list, model_type):
+    gm = gen_model(args_list)
     if model_type == "abs":
         model = gm.abs_model()
     elif model_type == "add":
@@ -141,18 +140,19 @@ def call_gen_model(args_list, model_type, data_type):
 
 
 class gen_model:
-    def __init__(self, args_list, data_type):
+    def __init__(self, args_list):
         self.input_size = [args_list[0], args_list[1], args_list[2]]
         self.input_size_2d = [args_list[2]]
-        self.input = Input(self.input_size, batch_size=1, dtype=data_type)
-        self.input2 = Input(self.input_size, batch_size=1, dtype=data_type)
-        self.input_2d = Input(args_list[2], batch_size=1, dtype=data_type)
         self.filter = args_list[3]
-        self.kernel = args_list[4]
-        self.stride = args_list[5]
-        self.padding = args_list[6]
-        self.axis = args_list[7]
-        self.num_input = args_list[8]
+        self.data_type = args_list[4]
+        self.input = Input(self.input_size, batch_size=1, dtype=self.data_type)
+        self.input2 = Input(self.input_size, batch_size=1, dtype=self.data_type)
+        self.input_2d = Input(args_list[2], batch_size=1, dtype=self.data_type)
+        self.kernel = args_list[5]
+        self.stride = args_list[6]
+        self.padding = args_list[7]
+        self.axis = args_list[8]
+        self.num_input = args_list[9]
 
     def abs_model(self):
         input_tensor = tf.math.abs(self.input)
@@ -235,12 +235,12 @@ class gen_model:
         return output
 
     def gather_model(self):
-        input_tensor = tf.gather(self.input, self.axis, indices=[0, 3, 1, 1, 2, 3])
+        input_tensor = tf.gather(self.input, indices=[0, 3, 1, 1, 2, 3], axis=self.axis)
         output = Model([self.input], input_tensor)
         return output
 
     def global_average_2d_model(self):
-        input_tensor = GlobalAveragePooling2D(keepdims=True)(self.input)
+        input_tensor = GlobalAveragePooling2D()(self.input)
         output = Model([self.input], input_tensor)
         return output
 
@@ -295,14 +295,15 @@ class gen_model:
         return output
 
     def minimum_model(self):
-        input_tensor = tf.math.minimum(self.input, self.input)
-        output = Model([self.input], input_tensor)
+        input_tensor = tf.math.minimum(self.input, self.input2)
+        output = Model([self.input, self.input2], input_tensor)
         return output
 
     def mul_add_model(self):
         input_set = []
-        for i in range(5):
-            input_set.append(self.input)
+        for i in range(self.num_input):
+            input = Input(self.input_size, batch_size=1, dtype=tf.float32)
+            input_set.append(input)
         input_tensor = Add()(input_set)
         output = Model(input_set, input_tensor)
         return output
