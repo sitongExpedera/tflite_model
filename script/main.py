@@ -8,6 +8,7 @@ import os
 input_shape = [1, 8, 8, 8]
 num_inp = 1
 nbits = 8
+is_2d = False
 
 
 def gen_tflite(model, model_name, save_dir, op_type, en_quant, quant_layer):
@@ -153,6 +154,7 @@ if __name__ == "__main__":
     parser.add_argument("--filter", "-f", type=int, default=8)
     parser.add_argument("--kernel", "-k", type=int, default=3)
     parser.add_argument("--stride", "-s", type=int, default=1)
+    parser.add_argument("--axis", "-a", type=int, default=1)
     parser.add_argument("--padding", "-p", type=str, default="valid")
     parser.add_argument("--nbits", "-nb", type=int, default=8)
     parser.add_argument("--list", "-l", action="store_true")
@@ -165,6 +167,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     num_inp = args.num_inp
+    nbits = args.nbits
     input_shape = [1, args.height, args.width, args.channels]
 
     if args.list:
@@ -192,6 +195,9 @@ if __name__ == "__main__":
     else:
         data_type = "float32"
 
+    if "2d" in args.model and "conv2d" not in args.model:
+        is_2d = True
+
     args_list = [
         args.height,
         args.width,
@@ -200,23 +206,26 @@ if __name__ == "__main__":
         args.kernel,
         args.stride,
         args.padding,
+        args.axis,
         args.num_inp,
     ]
-
-    nbits = args.nbits
 
     model = gm.call_gen_model(args_list, args.model.lower(), data_type)
 
     model.summary()
-    model_name = (
-        args.model.lower()
-        + "_h"
-        + str(args.height)
-        + "_w"
-        + str(args.width)
-        + "_c"
-        + str(args.channels)
-    )
+
+    if is_2d:
+        model_name = args.model.lower() + "_c" + str(args.channels)
+    else:
+        model_name = (
+            args.model.lower()
+            + "_h"
+            + str(args.height)
+            + "_w"
+            + str(args.width)
+            + "_c"
+            + str(args.channels)
+        )
     if "conv" in args.model.lower():
         model_name += (
             "_f"

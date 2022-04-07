@@ -146,12 +146,13 @@ class gen_model:
         self.input_size_2d = [args_list[2]]
         self.input = Input(self.input_size, batch_size=1, dtype=data_type)
         self.input2 = Input(self.input_size, batch_size=1, dtype=data_type)
-        self.input_d2 = Input(args_list[2], batch_size=1, dtype=data_type)
+        self.input_2d = Input(args_list[2], batch_size=1, dtype=data_type)
         self.filter = args_list[3]
         self.kernel = args_list[4]
         self.stride = args_list[5]
         self.padding = args_list[6]
-        self.num_input = args_list[7]
+        self.axis = args_list[7]
+        self.num_input = args_list[8]
 
     def abs_model(self):
         input_tensor = tf.math.abs(self.input)
@@ -214,8 +215,8 @@ class gen_model:
     def dense_model(self):
         input_tensor = Dense(
             1, use_bias=True, bias_initializer=tf.keras.initializers.HeNormal()
-        )(self.input_d2)
-        output = Model([self.input_d2], input_tensor)
+        )(self.input_2d)
+        output = Model([self.input_2d], input_tensor)
         return output
 
     def depth_to_space_model(self):
@@ -229,12 +230,12 @@ class gen_model:
         return output
 
     def expand_dims_model(self):
-        input_tensor = tf.expand_dims(self.input, axis=2)
+        input_tensor = tf.expand_dims(self.input, self.axis)
         output = Model([self.input], input_tensor)
         return output
 
     def gather_model(self):
-        input_tensor = tf.gather(self.input, axis=2, indices=[0, 3, 1, 1, 2, 3])
+        input_tensor = tf.gather(self.input, self.axis, indices=[0, 3, 1, 1, 2, 3])
         output = Model([self.input], input_tensor)
         return output
 
@@ -289,7 +290,7 @@ class gen_model:
         return output
 
     def mean_model(self):
-        input_tensor = tf.math.reduce_mean(self.input, axis=3, keepdims=True)
+        input_tensor = tf.math.reduce_mean(self.input, self.axis, keepdims=True)
         output = Model([self.input], input_tensor)
         return output
 
