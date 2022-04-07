@@ -140,6 +140,7 @@ if __name__ == "__main__":
 
     if "2d" in args.model and "conv2d" not in args.model:
         is_2d = True
+        input_shape = [1, args.channels]
 
     if args.model == "minimum":
         num_inp = 2
