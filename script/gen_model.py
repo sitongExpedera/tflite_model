@@ -35,6 +35,8 @@ def call_gen_model(args_list, model_type):
         model = gm.conv2d_model()
     elif model_type == "conv2d_trans":
         model = gm.conv2d_trans_model()
+    elif model_type == "cos":
+        model = gm.cos_model()
     elif model_type == "dense":
         model = gm.dense_model()
     elif model_type == "depth_to_space":
@@ -57,6 +59,8 @@ def call_gen_model(args_list, model_type):
         model = gm.less_model()
     elif model_type == "less_equal":
         model = gm.less_equal_model()
+    elif model_type == "log":
+        model = gm.log_model()
     elif model_type == "log_softmax":
         model = gm.log_softmax_model()
     elif model_type == "logical_not":
@@ -115,6 +119,8 @@ def call_gen_model(args_list, model_type):
         model = gm.sqrt_model()
     elif model_type == "square":
         model = gm.square_model()
+    elif model_type == "squared_difference":
+        model = gm.squared_difference_model()
     elif model_type == "squeeze":
         model = gm.squeeze_model()
     elif model_type == "stack":
@@ -191,7 +197,7 @@ class gen_model:
         for i in range(self.num_inputs):
             input = Input(self.input_size, batch_size=self.batch, dtype=tf.float32)
             input_set.append(input)
-        input_tensor = Concatenate()(input_set)
+        input_tensor = Concatenate(axis=self.axis)(input_set)
         output = Model(input_set, input_tensor)
         return output
 
@@ -214,6 +220,11 @@ class gen_model:
             kernel_size=self.kernel,
             padding=self.padding,
         )(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def cos_model(self):
+        input_tensor = tf.math.cos(self.input)
         output = Model([self.input], input_tensor)
         return output
 
@@ -271,6 +282,11 @@ class gen_model:
 
     def less_equal_model(self):
         input_tensor = tf.math.less_equal(self.input, self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def log_model(self):
+        input_tensor = tf.math.log(self.input)
         output = Model([self.input], input_tensor)
         return output
 
@@ -426,6 +442,11 @@ class gen_model:
     def square_model(self):
         input_tensor = tf.math.square(self.input)
         output = Model([self.input], input_tensor)
+        return output
+
+    def squared_difference_model(self):
+        input_tensor = tf.math.squared_difference(self.input, self.input2)
+        output = Model([self.input, self.input2], input_tensor)
         return output
 
     def squeeze_model(self):
