@@ -23,6 +23,7 @@ model_choices = [
     "log_softmax",
     "logical_not",
     "logical_or",
+    "matmul",
     "maximum",
     "mean",
     "minimum",

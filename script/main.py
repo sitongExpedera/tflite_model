@@ -143,7 +143,13 @@ if __name__ == "__main__":
         is_2d = True
         input_shape = [1, args.channels]
 
-    if args.model == "minimum":
+    if (
+        args.model == "add"
+        or args.model == "minimum"
+        or args.model == "maximum"
+        or args.model == "matmul"
+        or args.model == "squared_difference"
+    ):
         num_inp = 2
 
     args_list = [

@@ -67,6 +67,8 @@ def call_gen_model(args_list, model_type):
         model = gm.logical_not_model()
     elif model_type == "logical_or":
         model = gm.logical_or_model()
+    elif model_type == "matmul":
+        model = gm.matmul_model()
     elif model_type == "maximum":
         model = gm.maximum_model()
     elif model_type == "mean":
@@ -305,9 +307,16 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
+    def matmul_model(self):
+        input = Input(self.input_size, dtype=self.data_type)
+        input2 = Input(self.input_size, dtype=self.data_type)
+        input_tensor = tf.matmul(input, input2)
+        output = Model([input, input2], input_tensor)
+        return output
+
     def maximum_model(self):
-        input_tensor = tf.math.maximum(self.input, self.input)
-        output = Model([self.input], input_tensor)
+        input_tensor = tf.math.maximum(self.input, self.input2)
+        output = Model([self.input, self.input2], input_tensor)
         return output
 
     def mean_model(self):
