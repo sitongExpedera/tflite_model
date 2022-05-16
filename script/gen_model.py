@@ -10,12 +10,11 @@ from tensorflow.keras.layers import (
     GlobalAveragePooling2D,
     Dense,
     SeparableConv2D,
+    UpSampling2D,
 )
 from tensorflow.keras.activations import tanh, relu, sigmoid, swish
 from tensorflow.keras.models import Model
 import tensorflow as tf
-import logging
-
 
 def call_gen_model(args_list, model_type):
     gm = gen_model(args_list)
@@ -66,9 +65,16 @@ class gen_model:
 
     def bilinear_resize_model(self):
         input_tensor = tf.image.resize(
-            self.input, size=[self.input_size[0] // 2, self.input_size[1] // 2]
+            self.input, size=[self.input_size[0] // 2 + 1, self.input_size[1] // 2 + 1]
         )
         output = Model([self.input], input_tensor)
+        return output
+
+    def boradcast_add_model(self):
+        input_size = [self.height, 1, self.channel]
+        input = Input(input_size, batch_size=self.batch, dtype=tf.float32)
+        input_tensor = tf.math.add(self.input, input)
+        output = Model([self.input, input], input_tensor)
         return output
 
     def concat_model(self):
@@ -220,6 +226,13 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
+    def nearest_neighbor_resize_model(self):
+        input_tensor = tf.image.resize(
+            self.input, size=[self.input_size[0] // 2 + 1, self.input_size[1] // 2 + 1], method="nearest"
+        )
+        output = Model([self.input], input_tensor)
+        return output
+
     def not_equal_model(self):
         input_tensor = tf.math.not_equal(self.input, self.input)
         output = Model([self.input], input_tensor)
@@ -230,23 +243,33 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
+    def reduce_all_model(self):
+        input_tensor = tf.math.reduce_all(self.input, self.axis, keepdims=True)
+        output = Model([self.input], input_tensor)
+        return output
+
     def reduce_any_model(self):
-        input_tensor = tf.math.reduce_any(self.input)
+        input_tensor = tf.math.reduce_any(self.input, self.axis, keepdims=True)
         output = Model([self.input], input_tensor)
         return output
 
     def reduce_max_model(self):
-        input_tensor = tf.math.reduce_max(self.input)
+        input_tensor = tf.math.reduce_max(self.input, self.axis, keepdims=True)
         output = Model([self.input], input_tensor)
         return output
 
     def reduce_min_model(self):
-        input_tensor = tf.math.reduce_min(self.input)
+        input_tensor = tf.math.reduce_min(self.input, self.axis, keepdims=True)
         output = Model([self.input], input_tensor)
         return output
 
     def reduce_prod_model(self):
-        input_tensor = tf.math.reduce_prod(self.input)
+        input_tensor = tf.math.reduce_prod(self.input, self.axis, keepdims=True)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def reduce_sum_model(self):
+        input_tensor = tf.math.reduce_sum(self.input, self.axis, keepdims=True)
         output = Model([self.input], input_tensor)
         return output
 
@@ -390,5 +413,10 @@ class gen_model:
 
     def unstack_model(self):
         input_tensor = tf.unstack(self.input, axis=self.axis)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def upsample_model(self):
+        input_tensor = UpSampling2D(size=(1.37, 1.37))(self.input)
         output = Model([self.input], input_tensor)
         return output

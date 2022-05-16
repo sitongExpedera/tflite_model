@@ -132,6 +132,7 @@ if __name__ == "__main__":
         args.model.lower() == "logical_not"
         or args.model.lower() == "logical_or"
         or args.model.lower() == "reduce_any"
+        or args.model.lower() == "reduce_all"
     ):
         data_type = "bool"
     elif args.model.lower() == "right_shift":
