@@ -63,6 +63,13 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
+    def batchmatmul_model(self):
+        input1 = Input(self.input_size, dtype=tf.float32)
+        input2 = Input(self.input_size, dtype=tf.float32)
+        input_tensor = tf.matmul(input1, input2)
+        output = Model([input1, input2], input_tensor)
+        return output
+
     def bilinear_resize_model(self):
         input_tensor = tf.image.resize(
             self.input, size=[self.input_size[0] // 2 + 1, self.input_size[1] // 2 + 1]
@@ -331,6 +338,11 @@ class gen_model:
     def softmax_model(self):
         input_tensor = tf.nn.softmax(self.input)
         output = Model([self.input], input_tensor)
+        return output
+
+    def softmax2d_model(self):
+        input_tensor = tf.nn.softmax(self.input_2d)
+        output = Model([self.input_2d], input_tensor)
         return output
 
     def space_to_depth_model(self):
