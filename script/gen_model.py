@@ -11,6 +11,8 @@ from tensorflow.keras.layers import (
     Dense,
     SeparableConv2D,
     UpSampling2D,
+    DepthwiseConv2D,
+    MaxPooling2D,
 )
 from tensorflow.keras.activations import tanh, relu, sigmoid, swish
 from tensorflow.keras.models import Model
@@ -132,6 +134,17 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
+    def dw_conv2d_model(self):
+        input_tensor = DepthwiseConv2D(
+            kernel_size=self.kernel,
+            strides=self.stride,
+            padding=self.padding,
+            use_bias=True,
+            name="dw_conv0",
+        )(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
     def exp_model(self):
         input_tensor = tf.math.exp(self.input)
         output = Model([self.input], input_tensor)
@@ -207,6 +220,13 @@ class gen_model:
     def maximum_model(self):
         input_tensor = tf.math.maximum(self.input, self.input2)
         output = Model([self.input, self.input2], input_tensor)
+        return output
+
+    def maxpool_model(self):
+        input_tensor = MaxPooling2D(
+            pool_size=self.kernel, strides=self.stride, padding=self.padding
+        )(self.input)
+        output = Model([self.input], input_tensor)
         return output
 
     def mean_model(self):
