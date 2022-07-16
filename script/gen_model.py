@@ -18,6 +18,7 @@ from tensorflow.keras.activations import tanh, relu, sigmoid, swish
 from tensorflow.keras.models import Model
 import tensorflow as tf
 
+
 def call_gen_model(args_list, model_type):
     gm = gen_model(args_list)
     model_name = f"gm.{model_type}_model"
@@ -42,8 +43,12 @@ class gen_model:
         self.input_size = [self.height, self.width, self.channel]
         self.input_size_2d = [self.channel]
         self.input = Input(self.input_size, batch_size=self.batch, dtype=self.data_type)
-        self.input2 = Input(self.input_size, batch_size=self.batch, dtype=self.data_type)
-        self.input_2d = Input(self.input_size_2d, batch_size=self.batch, dtype=self.data_type)
+        self.input2 = Input(
+            self.input_size, batch_size=self.batch, dtype=self.data_type
+        )
+        self.input_2d = Input(
+            self.input_size_2d, batch_size=self.batch, dtype=self.data_type
+        )
 
     def abs_model(self):
         input_tensor = tf.math.abs(self.input)
@@ -62,6 +67,13 @@ class gen_model:
 
     def arg_min_model(self):
         input_tensor = tf.math.argmin(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def batch_to_space_model(self):
+        input_tensor = tf.batch_to_space(
+            self.input, block_shape=[2, 2], crops=[[1, 2], [3, 4]]
+        )
         output = Model([self.input], input_tensor)
         return output
 
@@ -255,7 +267,9 @@ class gen_model:
 
     def nearest_neighbor_resize_model(self):
         input_tensor = tf.image.resize(
-            self.input, size=[self.input_size[0] // 2 + 1, self.input_size[1] // 2 + 1], method="nearest"
+            self.input,
+            size=[self.input_size[0] // 2 + 1, self.input_size[1] // 2 + 1],
+            method="nearest",
         )
         output = Model([self.input], input_tensor)
         return output
@@ -363,6 +377,13 @@ class gen_model:
     def softmax2d_model(self):
         input_tensor = tf.nn.softmax(self.input_2d)
         output = Model([self.input_2d], input_tensor)
+        return output
+
+    def space_to_batch_model(self):
+        input_tensor = tf.nn.space_to_batch(
+            self.input, block_shape=[2, 2], paddings=[[0, 0], [0, 0]]
+        )
+        output = Model([self.input], input_tensor)
         return output
 
     def space_to_depth_model(self):
