@@ -13,6 +13,7 @@ from tensorflow.keras.layers import (
     UpSampling2D,
     DepthwiseConv2D,
     MaxPooling2D,
+    Cropping2D,
 )
 from tensorflow.keras.activations import tanh, relu, sigmoid, swish
 from tensorflow.keras.models import Model
@@ -131,6 +132,11 @@ class gen_model:
 
     def cos_model(self):
         input_tensor = tf.math.cos(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
+    def crop_model(self):
+        input_tensor = Cropping2D(cropping=((1, 1), (2, 2)))(self.input)
         output = Model([self.input], input_tensor)
         return output
 

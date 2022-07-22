@@ -11,6 +11,7 @@ model_choices = [
     "conv2d",
     "conv2d_trans",
     "cos",
+    "crop",
     "dense",
     "depth_to_space",
     "dw_conv2d",
