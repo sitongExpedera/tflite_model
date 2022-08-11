@@ -86,9 +86,13 @@ class gen_model:
         return output
 
     def bilinear_resize_model(self):
-        input_tensor = tf.image.resize(
-            self.input, size=[self.input_size[0] // 2 + 1, self.input_size[1] // 2 + 1]
-        )
+        input_tensor = tf.keras.layers.Lambda(
+            lambda x: tf.compat.v1.image.resize_bilinear(
+                x,
+                size=[self.input_size[0] // 2, self.input_size[1] // 2],
+                align_corners=True,
+            )
+        )(self.input)
         output = Model([self.input], input_tensor)
         return output
 
@@ -272,10 +276,10 @@ class gen_model:
         return output
 
     def nearest_neighbor_resize_model(self):
-        input_tensor = tf.image.resize(
+        input_tensor = tf.compat.v1.image.resize_nearest_neighbor(
             self.input,
-            size=[self.input_size[0] // 2 + 1, self.input_size[1] // 2 + 1],
-            method="nearest",
+            [self.input_size[1] * 2, self.input_size[2] * 2],
+            half_pixel_centers=True,
         )
         output = Model([self.input], input_tensor)
         return output
@@ -478,4 +482,31 @@ class gen_model:
     def upsample_model(self):
         input_tensor = UpSampling2D(size=(1.37, 1.37))(self.input)
         output = Model([self.input], input_tensor)
+        return output
+
+    def custom_model(self):
+        x = Conv2D(
+            filters=self.filter,
+            kernel_size=self.kernel,
+            strides=self.stride,
+            name="conv2",
+            use_bias=True,
+            padding=self.padding,
+        )(self.input)
+        x = tf.keras.layers.Lambda(
+            lambda x: tf.compat.v1.image.resize_bilinear(
+                x,
+                size=[self.input_size[0] // 2, self.input_size[1] // 2],
+                align_corners=True,
+            )
+        )(x)
+        x = Conv2D(
+            filters=self.filter,
+            kernel_size=self.kernel,
+            strides=self.stride,
+            name="conv0",
+            use_bias=True,
+            padding=self.padding,
+        )(x)
+        output = Model([self.input], x)
         return output

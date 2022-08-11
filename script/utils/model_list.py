@@ -72,4 +72,5 @@ model_choices = [
     "tanh",
     "unstack",
     "upsample",
+    "custom",
 ]
