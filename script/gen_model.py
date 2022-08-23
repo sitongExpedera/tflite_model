@@ -61,6 +61,11 @@ class gen_model:
         output = Model([self.input, self.input2], input_tensor)
         return output
 
+    def add_const_model(self):
+        input_tensor = self.input + 1
+        output = Model([self.input], input_tensor)
+        return output
+
     def arg_max_model(self):
         input_tensor = tf.math.argmax(self.input)
         output = Model([self.input], input_tensor)

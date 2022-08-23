@@ -1,6 +1,7 @@
 model_choices = [
     "abs",
     "add",
+    "add_const",
     "arg_max",
     "arg_min",
     "batch_to_space",
