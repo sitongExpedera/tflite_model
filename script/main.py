@@ -112,6 +112,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     num_inp = args.num_inp
     nbits = args.nbits
+    en_quant = args.en_quant
     input_shape = [args.batch, args.height, args.width, args.channels]
 
     if args.list:
@@ -128,29 +129,32 @@ if __name__ == "__main__":
         print("")
         exit(0)
 
-    if (
-        args.model.lower() == "logical_not"
-        or args.model.lower() == "logical_or"
-        or args.model.lower() == "reduce_any"
-        or args.model.lower() == "reduce_all"
-    ):
+    model_type = args.model.lower()
+
+    bool_type_op = ["logical_not", "logical_or", "reduce_any", "reduce_all"]
+    int32_type_op = ["right_shift"]
+
+    if model_type in bool_type_op:
         data_type = "bool"
-    elif args.model.lower() == "right_shift":
+        en_quant = 0
+    elif model_type in int32_type_op:
         data_type = "int32"
     else:
         data_type = "float32"
-
-    if "2d" in args.model and "conv2d" not in args.model:
+    if "2d" in model_type and "conv2d" not in model_type:
         is_2d = True
         input_shape = [1, args.channels]
 
-    if (
-        args.model == "add"
-        or args.model == "minimum"
-        or args.model == "maximum"
-        or args.model == "matmul"
-        or args.model == "squared_difference"
-    ):
+    two_input_op = [
+        "add",
+        "minimum",
+        "maximum",
+        "matmul",
+        "squared_difference",
+        "batchmatmul",
+    ]
+
+    if model_type in two_input_op:
         num_inp = 2
 
     args_list = [
@@ -167,17 +171,15 @@ if __name__ == "__main__":
         args.num_inp,
     ]
 
-    model = gm.call_gen_model(args_list, args.model.lower())
+    model = gm.call_gen_model(args_list, model_type)
 
     model.summary()
 
     if is_2d:
-        model_name = (
-            args.model.lower() + "_b" + str(args.batch) + "_c" + str(args.channels)
-        )
+        model_name = model_type + "_b" + str(args.batch) + "_c" + str(args.channels)
     else:
         model_name = (
-            args.model.lower()
+            model_type
             + "_b"
             + str(args.batch)
             + "_h"
@@ -187,7 +189,7 @@ if __name__ == "__main__":
             + "_c"
             + str(args.channels)
         )
-    if "conv" in args.model.lower():
+    if "conv" in model_type:
         model_name += (
             "_f"
             + str(args.filter)
@@ -199,5 +201,5 @@ if __name__ == "__main__":
             + args.padding.lower()
         )
     gen_tflite(
-        model, model_name, args.out_dir, data_type, args.en_quant, args.quant_layer
+        model, model_name, args.out_dir, data_type, en_quant, args.quant_layer
     )

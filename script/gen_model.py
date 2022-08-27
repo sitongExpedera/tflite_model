@@ -78,16 +78,14 @@ class gen_model:
 
     def batch_to_space_model(self):
         input_tensor = tf.batch_to_space(
-            self.input, block_shape=[2, 2], crops=[[1, 2], [3, 4]]
+            self.input, block_shape=[3, 3], crops=[[0, 0], [0, 0]]
         )
         output = Model([self.input], input_tensor)
         return output
 
     def batchmatmul_model(self):
-        input1 = Input(self.input_size, dtype=tf.float32)
-        input2 = Input(self.input_size, dtype=tf.float32)
-        input_tensor = tf.matmul(input1, input2)
-        output = Model([input1, input2], input_tensor)
+        input_tensor = tf.matmul(self.input, self.input2)
+        output = Model([self.input, self.input2], input_tensor)
         return output
 
     def bilinear_resize_model(self):
@@ -281,11 +279,13 @@ class gen_model:
         return output
 
     def nearest_neighbor_resize_model(self):
-        input_tensor = tf.compat.v1.image.resize_nearest_neighbor(
-            self.input,
-            [self.input_size[1] * 2, self.input_size[2] * 2],
-            half_pixel_centers=True,
-        )
+        input_tensor = tf.keras.layers.Lambda(
+            lambda x: tf.compat.v1.image.resize_nearest_neighbor(
+                x,
+                size=[self.input_size[0] * 2, self.input_size[1] * 2],
+                half_pixel_centers=True,
+            )
+        )(self.input)
         output = Model([self.input], input_tensor)
         return output
 
@@ -396,7 +396,7 @@ class gen_model:
 
     def space_to_batch_model(self):
         input_tensor = tf.nn.space_to_batch(
-            self.input, block_shape=[2, 2], paddings=[[0, 0], [0, 0]]
+            self.input, block_shape=[3, 3], paddings=[[0, 1], [0, 1]]
         )
         output = Model([self.input], input_tensor)
         return output
