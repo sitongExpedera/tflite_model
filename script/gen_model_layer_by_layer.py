@@ -2,9 +2,10 @@
 from gen_layer import *
 import json
 import logging
-from utils.quantize_utils import quantize_utils
 import argparse
 import os
+from utils.quantize_utils import quantize_utils
+from utils.uuid import get_short_id
 
 
 def check_attrs(ltype, attrs, attrs_check):
@@ -104,10 +105,11 @@ if __name__ == "__main__":
     layer_attrs = args.layer_attrs
     input_shape = [args.batch, args.height, args.width, args.channels]
     model = gen_model(model_info, layer_attrs, input_shape)
+    model.summary()
     qu = quantize_utils(model.input_shape, len(model.inputs))
     qu.gen_quant_tflite(
         model,
-        model.name,
+        model.name + "_" + get_short_id(),
         args.out_dir,
         model.dtype,
         args.en_quant,

@@ -59,27 +59,27 @@ class quantize_utils:
 
     def representative_float_dataset_gen(self):
         input_set = []
-        for _ in range(self.num_inp):
+        for n in range(self.num_inp):
             input_data = 5 * np.array(
-                np.random.random_sample(self.input_shape), dtype="float32"
+                np.random.random_sample(self.input_shape[n]), dtype="float32"
             )
             input_set.append(input_data)
         yield input_set
 
     def representative_bool_dataset_gen(self):
         input_set = []
-        for _ in range(self.num_inp):
+        for n in range(self.num_inp):
             input_data = 5 * np.array(
-                np.random.random_sample(self.input_shape), dtype="bool"
+                np.random.random_sample(self.input_shape[n]), dtype="bool"
             )
             input_set.append(input_data)
         yield input_set
 
     def representative_int_dataset_gen(self):
         input_set = []
-        for _ in range(self.num_inp):
+        for n in range(self.num_inp):
             input_data = 5 * np.array(
-                np.random.random_sample(self.input_shape), dtype="int32"
+                np.random.random_sample(self.input_shape[n]), dtype="int32"
             )
             input_set.append(input_data)
         yield input_set

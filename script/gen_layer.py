@@ -53,3 +53,23 @@ def gen_layer_DepthwiseConv2D(input, attrs):
         groups=attrs["groups"],
     )(input)
     return layer
+
+
+def gen_layer_Add(input, attrs):
+    input = input if len(input) != 1 else input[0]
+    if attrs["const"]:
+        const_val = 10
+        layer = input + const_val
+    else:
+        layer = Add()(input)
+    return layer
+
+
+def gen_layer_Mul(input, attrs):
+    input = input if len(input) != 1 else input[0]
+    if attrs["const"]:
+        const_val = 10
+        layer = input * const_val
+    else:
+        layer = Multiply()(input)
+    return layer

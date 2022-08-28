@@ -1,0 +1,18 @@
+{
+    "ModelName": "test",
+    "Layer": [
+        {
+            "LayerType": "Conv2D",
+            "LayerID": 1,
+            "InputID": [ 0 ],
+            "Attrs": {
+                "filters": 8,
+                "kernel_size": [ 3, 3 ],
+                "strides": [ 1, 1 ],
+                "padding": "same",
+                "dilation_rate": [ 1, 1 ],
+                "groups": 1
+            }
+        }
+    ]
+}
