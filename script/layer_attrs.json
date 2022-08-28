@@ -1,0 +1,26 @@
+{
+    "AttrsCheck":
+    {
+        "Conv2D": [ "filters", "kernel_size", "strides", "padding", "dilation_rate", "groups" ],
+        "DepthwiseConv2D": [ "kernel_size", "strides", "padding", "dilation_rate", "groups" ]
+    }
+    ,
+    "AttrsDefault":
+    {
+        "Conv2D": {
+            "filters": 8,
+            "kernel_size": [ 3, 3 ],
+            "strides": [ 1, 1 ],
+            "padding": "same",
+            "dilation_rate": [ 1, 1 ],
+            "groups": 1
+        },
+        "DepthwiseConv2D": {
+            "kernel_size": [ 3, 3 ],
+            "strides": [ 1, 1 ],
+            "padding": "same",
+            "dilation_rate": [ 1, 1 ],
+            "groups": 1
+        }
+    }
+}
