@@ -9,7 +9,6 @@ from utils.quantize_utils import quantize_utils
 
 
 input_shape = [1, 8, 8, 8]
-num_inp = 1
 nbits = 8
 is_2d = False
 
@@ -55,7 +54,6 @@ if __name__ == "__main__":
         help="includes quantize and dequantize layers",
     )
     args = parser.parse_args()
-    num_inp = args.num_inp
     nbits = args.nbits
     en_quant = args.en_quant
     input_shape = [args.batch, args.height, args.width, args.channels]
@@ -76,32 +74,16 @@ if __name__ == "__main__":
 
     model_type = args.model.lower()
 
-    bool_type_op = ["logical_not", "logical_or", "reduce_any", "reduce_all"]
-    int32_type_op = ["right_shift"]
+    bool_type_op = ["logical_not", "logical_or", "reduce_any"]
 
     if model_type in bool_type_op:
         data_type = "bool"
         en_quant = 0
-    elif model_type in int32_type_op:
-        data_type = "int32"
     else:
         data_type = "float32"
     if "2d" in model_type and "conv2d" not in model_type:
         is_2d = True
         input_shape = [1, args.channels]
-
-    two_input_op = [
-        "add",
-        "minimum",
-        "maximum",
-        "matmul",
-        "squared_difference",
-        "batchmatmul",
-    ]
-
-    if model_type in two_input_op:
-        num_inp = 2
-
     args_list = [
         args.batch,
         args.height,
@@ -145,7 +127,12 @@ if __name__ == "__main__":
             + "_"
             + args.padding.lower()
         )
-    qu = quantize_utils(input_shape, num_inp)
+    input_shape = (
+        model.input_shape
+        if isinstance(model.input_shape, list)
+        else [model.input_shape]
+    )
+    qu = quantize_utils(input_shape, len(model.inputs))
     qu.gen_quant_tflite(
         model=model,
         model_name=model_name,

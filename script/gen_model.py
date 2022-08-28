@@ -236,8 +236,8 @@ class gen_model:
         return output
 
     def matmul_model(self):
-        input = Input(self.input_size, dtype=self.data_type)
-        input2 = Input(self.input_size, dtype=self.data_type)
+        input = Input(self.input_size, self.batch, dtype=self.data_type)
+        input2 = Input(self.input_size, self.batch, dtype=self.data_type)
         input_tensor = tf.matmul(input, input2)
         output = Model([input, input2], input_tensor)
         return output
@@ -299,11 +299,6 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
-    def reduce_all_model(self):
-        input_tensor = tf.math.reduce_all(self.input, self.axis, keepdims=True)
-        output = Model([self.input], input_tensor)
-        return output
-
     def reduce_any_model(self):
         input_tensor = tf.math.reduce_any(self.input, self.axis, keepdims=True)
         output = Model([self.input], input_tensor)
@@ -343,11 +338,6 @@ class gen_model:
         input_tensor = tf.reshape(
             self.input, shape=[1, self.input_size[0] // 2, self.input_size[1] * 2, -1]
         )
-        output = Model([self.input], input_tensor)
-        return output
-
-    def right_shift_model(self):
-        input_tensor = tf.bitwise.right_shift(self.input, self.input)
         output = Model([self.input], input_tensor)
         return output
 
@@ -395,8 +385,17 @@ class gen_model:
         return output
 
     def space_to_batch_model(self):
+        block_size = 3
+        pad_h = self.height - self.height // block_size * block_size
+        pad_w = self.width - self.width // block_size * block_size
+        pad_top = pad_h // 2
+        pad_bot = pad_h - pad_top
+        pad_left = pad_w // 2
+        pad_right = pad_w - pad_left
         input_tensor = tf.nn.space_to_batch(
-            self.input, block_shape=[3, 3], paddings=[[0, 1], [0, 1]]
+            self.input,
+            block_shape=[block_size, block_size],
+            paddings=[[pad_top, pad_bot], [pad_left, pad_right]],
         )
         output = Model([self.input], input_tensor)
         return output
@@ -470,7 +469,9 @@ class gen_model:
         return output
 
     def tan_model(self):
-        input_tensor = tf.math.tan(self.input)
+        input_tensor = tf.keras.backend.sin(self.input) / tf.keras.backend.cos(
+            self.input
+        )
         output = Model([self.input], input_tensor)
         return output
 

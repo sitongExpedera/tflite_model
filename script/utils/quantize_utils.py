@@ -69,7 +69,7 @@ class quantize_utils:
     def representative_bool_dataset_gen(self):
         input_set = []
         for n in range(self.num_inp):
-            input_data = 5 * np.array(
+            input_data = np.array(
                 np.random.random_sample(self.input_shape[n]), dtype="bool"
             )
             input_set.append(input_data)
