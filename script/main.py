@@ -5,80 +5,13 @@ import numpy as np
 import tensorflow as tf
 import os
 from utils.model_list import model_choices
+from utils.quantize_utils import quantize_utils
 
 
 input_shape = [1, 8, 8, 8]
 num_inp = 1
 nbits = 8
 is_2d = False
-
-
-def gen_tflite(model, model_name, save_dir, op_type, en_quant, quant_layer):
-    converter = tf.lite.TFLiteConverter.from_keras_model(model)
-    tflite_model_name = save_dir + model_name
-
-    if en_quant:
-        tflite_model_name += "_quant"
-        converter.optimizations = [tf.lite.Optimize.DEFAULT]
-        if op_type == "float32":
-            converter.representative_dataset = representative_float_dataset_gen
-        elif op_type == "bool":
-            converter.representative_dataset = representative_bool_dataset_gen
-        elif op_type == "int32":
-            converter.representative_dataset = representative_int_dataset_gen
-        if nbits == 8:
-            converter.target_spec.supported_ops = [
-                tf.lite.OpsSet.TFLITE_BUILTINS_INT8,
-                tf.lite.OpsSet.SELECT_TF_OPS,
-                tf.lite.OpsSet.TFLITE_BUILTINS,
-            ]
-            if quant_layer:
-                converter.experimental_new_converter = True
-                converter.target_spec.supported_types = [tf.int8]
-                converter.inference_input_type = tf.int8
-                converter.inference_output_type = tf.int8
-            tflite_model_name += "_8bits"
-        elif nbits == 16:
-            converter.target_spec.supported_ops = [
-                tf.lite.OpsSet.EXPERIMENTAL_TFLITE_BUILTINS_ACTIVATIONS_INT16_WEIGHTS_INT8,
-                tf.lite.OpsSet.SELECT_TF_OPS,
-                tf.lite.OpsSet.TFLITE_BUILTINS,
-            ]
-            if quant_layer:
-                converter.experimental_new_converter = True
-                converter.target_spec.supported_types = [tf.int16]
-                converter.inference_input_type = tf.int16
-                converter.inference_output_type = tf.int16
-            tflite_model_name += "_16bits"
-    tflite_model = converter.convert()
-    tflite_model_name += ".tflite"
-    open(tflite_model_name, "wb").write(tflite_model)
-    print(tflite_model_name)
-
-
-def representative_float_dataset_gen():
-    input_set = []
-    for _ in range(num_inp):
-        input_data = 5 * np.array(np.random.random_sample(input_shape), dtype="float32")
-        input_set.append(input_data)
-    yield input_set
-
-
-def representative_bool_dataset_gen():
-    input_set = []
-    for _ in range(num_inp):
-        input_data = 5 * np.array(np.random.random_sample(input_shape), dtype="bool")
-        input_set.append(input_data)
-    yield input_set
-
-
-def representative_int_dataset_gen():
-    input_set = []
-    for _ in range(num_inp):
-        input_data = 5 * np.array(np.random.random_sample(input_shape), dtype="int32")
-        input_set.append(input_data)
-    yield input_set
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -89,19 +22,31 @@ if __name__ == "__main__":
         type=str,
         default=os.getcwd() + "/models/test/",
     )
-    parser.add_argument("--num_inp", "-n", type=int, default=1)
-    parser.add_argument("--batch", "-b", type=int, default=1)
-    parser.add_argument("--width", "-w", type=int, default=8)
-    parser.add_argument("--height", "-ht", type=int, default=8)
-    parser.add_argument("--channels", "-c", type=int, default=8)
-    parser.add_argument("--en_quant", "-q", type=int, default=1)
-    parser.add_argument("--filter", "-f", type=int, default=8)
-    parser.add_argument("--kernel", "-k", type=int, default=3)
-    parser.add_argument("--stride", "-s", type=int, default=1)
-    parser.add_argument("--axis", "-a", type=int, default=1)
-    parser.add_argument("--padding", "-p", type=str, default="valid")
-    parser.add_argument("--nbits", "-nb", type=int, default=8)
-    parser.add_argument("--list", "-l", action="store_true")
+    parser.add_argument("--num_inp", "-n", type=int, default=1, help="Number of inputs")
+    parser.add_argument("--batch", "-b", type=int, default=1, help="Batch")
+    parser.add_argument("--width", "-w", type=int, default=8, help="Width")
+    parser.add_argument("--height", "-ht", type=int, default=8, help="Height")
+    parser.add_argument("--channels", "-c", type=int, default=8, help="Channel")
+    parser.add_argument("--en_quant", "-q", type=int, default=1, help="Quantize model")
+    parser.add_argument("--filter", "-f", type=int, default=8, help="Number of filters")
+    parser.add_argument("--kernel", "-k", type=int, default=3, help="Kernel size")
+    parser.add_argument("--stride", "-s", type=int, default=1, help="Stride")
+    parser.add_argument(
+        "--axis", "-a", type=int, default=1, help="axis for some ops eg.concat"
+    )
+    parser.add_argument(
+        "--padding", "-p", type=str, default="valid", help="padding mode(same/valid)"
+    )
+    parser.add_argument(
+        "--nbits",
+        "-nb",
+        type=int,
+        default=8,
+        help="Number of bits, support 8/16 bits for now",
+    )
+    parser.add_argument(
+        "--list", "-l", action="store_true", help="List all support model"
+    )
     parser.add_argument(
         "--quant_layer",
         "-ql",
@@ -200,6 +145,13 @@ if __name__ == "__main__":
             + "_"
             + args.padding.lower()
         )
-    gen_tflite(
-        model, model_name, args.out_dir, data_type, en_quant, args.quant_layer
+    qu = quantize_utils(input_shape, num_inp)
+    qu.gen_quant_tflite(
+        model=model,
+        model_name=model_name,
+        save_dir=args.out_dir,
+        op_type=data_type,
+        en_quant=en_quant,
+        quant_layer=args.quant_layer,
+        nbits=nbits,
     )
