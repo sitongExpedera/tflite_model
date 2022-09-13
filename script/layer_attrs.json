@@ -4,7 +4,8 @@
         "Conv2D": [ "filters", "kernel_size", "strides", "padding", "dilation_rate", "groups" ],
         "DepthwiseConv2D": [ "kernel_size", "strides", "padding", "dilation_rate", "groups" ],
         "Add": [ "const" ],
-        "Mul": [ "const" ]
+        "Mul": [ "const" ],
+        "Space2Batch": [ "block_shape", "padding" ]
     }
     ,
     "AttrsDefault":
@@ -29,6 +30,10 @@
         },
         "Mul": {
             "const": false
+        },
+        "Space2Batch": {
+            "block_shape": 3,
+            "paddings": [ [ 0, 0 ], [ 0, 0 ] ]
         }
     }
 }

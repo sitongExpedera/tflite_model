@@ -106,7 +106,12 @@ if __name__ == "__main__":
     input_shape = [args.batch, args.height, args.width, args.channels]
     model = gen_model(model_info, layer_attrs, input_shape)
     model.summary()
-    qu = quantize_utils(model.input_shape, len(model.inputs))
+    input_shape = (
+        model.input_shape
+        if isinstance(model.input_shape, list)
+        else [model.input_shape]
+    )
+    qu = quantize_utils(input_shape, len(model.inputs))
     qu.gen_quant_tflite(
         model,
         model.name + "_" + get_short_id(),

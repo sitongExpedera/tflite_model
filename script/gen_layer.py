@@ -1,3 +1,4 @@
+import logging
 import tensorflow as tf
 import tensorflow.keras.layers as Layer
 from tensorflow.keras.layers import (
@@ -72,4 +73,17 @@ def gen_layer_Mul(input, attrs):
         layer = input * const_val
     else:
         layer = Multiply()(input)
+    return layer
+
+
+def gen_layer_Space2Batch(input, attrs):
+    block_shape = attrs["block_shape"]
+    input = input if len(input) != 1 else input[0]
+    if input.shape[1] % block_shape != 0 or input.shape[2] % block_shape != 0:
+        logging.error(
+            "Space2Batch width and height should be multiples of f{block_shape}!!!"
+        )
+    layer = tf.nn.space_to_batch(
+        input, block_shape=[block_shape, block_shape], paddings=attrs["paddings"]
+    )
     return layer
