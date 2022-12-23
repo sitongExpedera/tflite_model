@@ -30,29 +30,12 @@ if __name__ == "__main__":
     parser.add_argument("--filter", "-f", type=int, default=8, help="Number of filters")
     parser.add_argument("--kernel", "-k", type=int, default=3, help="Kernel size")
     parser.add_argument("--stride", "-s", type=int, default=1, help="Stride")
-    parser.add_argument(
-        "--axis", "-a", type=int, default=1, help="axis for some ops eg.concat"
-    )
-    parser.add_argument(
-        "--padding", "-p", type=str, default="valid", help="padding mode(same/valid)"
-    )
-    parser.add_argument(
-        "--nbits",
-        "-nb",
-        type=int,
-        default=8,
-        help="Number of bits, support 8/16 bits for now",
-    )
-    parser.add_argument(
-        "--list", "-l", action="store_true", help="List all support model"
-    )
-    parser.add_argument(
-        "--quant_layer",
-        "-ql",
-        action="store_true",
-        default=False,
-        help="includes quantize and dequantize layers",
-    )
+    parser.add_argument("--axis", "-a", type=int, default=1, help="axis for some ops eg.concat")
+    parser.add_argument("--padding", "-p", type=str, default="valid", help="padding mode(same/valid)")
+    parser.add_argument("--nbits", "-nb", type=int, default=8, help="Number of bits, support 8/16 bits for now",)
+    parser.add_argument("--list", "-l", action="store_true", help="List all support model")
+    parser.add_argument("--quant_layer", "-ql", action="store_true", default=False, help="includes quantize and dequantize layers",)
+    parser.add_argument("--input_dtype", "-id", type=str, default="float32", help="date type of input")
     args = parser.parse_args()
     nbits = args.nbits
     en_quant = args.en_quant
@@ -80,7 +63,7 @@ if __name__ == "__main__":
         data_type = "bool"
         en_quant = 0
     else:
-        data_type = "float32"
+        data_type = args.input_dtype
     if "2d" in model_type and "conv2d" not in model_type:
         is_2d = True
         input_shape = [1, args.channels]

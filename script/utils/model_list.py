@@ -15,6 +15,7 @@ model_choices = [
     "crop",
     "dense",
     "depth_to_space",
+    "divide",
     "dw_conv2d",
     "exp",
     "expand_dims",

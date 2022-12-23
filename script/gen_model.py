@@ -18,6 +18,7 @@ from tensorflow.keras.layers import (
 from tensorflow.keras.activations import tanh, relu, sigmoid, swish
 from tensorflow.keras.models import Model
 import tensorflow as tf
+import numpy as np
 
 
 def call_gen_model(args_list, model_type):
@@ -159,6 +160,11 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
+    def divide_model(self):
+        input_tensor = tf.math.divide(self.input, self.input2)
+        output = Model([self.input, self.input2], input_tensor)
+        return output
+
     def dw_conv2d_model(self):
         input_tensor = DepthwiseConv2D(
             kernel_size=self.kernel,
@@ -284,6 +290,7 @@ class gen_model:
                 x,
                 size=[self.input_size[0] * 2, self.input_size[1] * 2],
                 half_pixel_centers=True,
+                align_corners=False
             )
         )(self.input)
         output = Model([self.input], input_tensor)
