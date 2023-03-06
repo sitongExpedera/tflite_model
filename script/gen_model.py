@@ -14,6 +14,7 @@ from tensorflow.keras.layers import (
     DepthwiseConv2D,
     MaxPooling2D,
     Cropping2D,
+    AveragePooling2D
 )
 from tensorflow.keras.activations import tanh, relu, sigmoid, swish
 from tensorflow.keras.models import Model
@@ -77,6 +78,11 @@ class gen_model:
         output = Model([self.input], input_tensor)
         return output
 
+    def avgpool_model(self):
+        input_tensor = AveragePooling2D(pool_size=(2, 2), strides=2)(self.input)
+        output = Model([self.input], input_tensor)
+        return output
+
     def batch_to_space_model(self):
         input_tensor = tf.batch_to_space(
             self.input, block_shape=[3, 3], crops=[[0, 0], [0, 0]]
@@ -93,8 +99,9 @@ class gen_model:
         input_tensor = tf.keras.layers.Lambda(
             lambda x: tf.compat.v1.image.resize_bilinear(
                 x,
-                size=[self.input_size[0] // 2, self.input_size[1] // 2],
-                align_corners=True,
+                size=[self.input_size[0] * 2, self.input_size[1] * 2],
+                align_corners=False,
+                half_pixel_centers=False
             )
         )(self.input)
         output = Model([self.input], input_tensor)

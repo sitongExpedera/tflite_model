@@ -4,6 +4,7 @@ model_choices = [
     "add_const",
     "arg_max",
     "arg_min",
+    "avgpool",
     "batch_to_space",
     "batchmatmul",
     "bilinear_resize",
