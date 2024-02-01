@@ -85,7 +85,7 @@ class gen_model:
 
     def batch_to_space_model(self):
         input_tensor = tf.batch_to_space(
-            self.input, block_shape=[3, 3], crops=[[0, 0], [0, 0]]
+            self.input, block_shape=[self.kernel, self.kernel], crops=[[0, 0], [0, 0]]
         )
         output = Model([self.input], input_tensor)
         return output
@@ -287,8 +287,8 @@ class gen_model:
         return output
 
     def multiply_model(self):
-        input_tensor = Multiply()([self.input, self.input])
-        output = Model([self.input], input_tensor)
+        input_tensor = Multiply()([self.input, self.input2])
+        output = Model([self.input, self.input2], input_tensor)
         return output
 
     def nearest_neighbor_resize_model(self):
@@ -500,7 +500,7 @@ class gen_model:
         return output
 
     def upsample_model(self):
-        input_tensor = UpSampling2D(size=(1.37, 1.37))(self.input)
+        input_tensor = UpSampling2D(size=(2, 2))(self.input)
         output = Model([self.input], input_tensor)
         return output
 

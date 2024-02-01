@@ -36,6 +36,7 @@ if __name__ == "__main__":
     parser.add_argument("--list", "-l", action="store_true", help="List all support model")
     parser.add_argument("--quant_layer", "-ql", action="store_true", default=False, help="includes quantize and dequantize layers",)
     parser.add_argument("--input_dtype", "-id", type=str, default="float32", help="date type of input")
+    parser.add_argument("--model_name", "-mn", default="", help="customize model name")
     args = parser.parse_args()
     nbits = args.nbits
     en_quant = args.en_quant
@@ -110,6 +111,8 @@ if __name__ == "__main__":
             + "_"
             + args.padding.lower()
         )
+    if args.model_name != "":
+        model_name = args.model_name
     input_shape = (
         model.input_shape
         if isinstance(model.input_shape, list)
